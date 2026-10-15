@@ -1,6 +1,6 @@
 import { memo, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, useWindowDimensions, View } from "react-native";
+import { Pressable, ScrollView, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import {
@@ -128,7 +128,9 @@ export const HomePage = () => {
     // Room left for a row's title: the actions column minus row padding (24), art (56), gaps (24), pill (~124).
     const tileWidth = actionsWidth - 228;
     const mascotSize = landscape ? Math.max(90, Math.min(150, height * 0.3)) : compact ? 110 : 150;
-    const wordmarkWidth = landscape ? Math.min((width - 40) * 0.45, 340) : Math.min(width - 48, 360);
+    // Landscape brand column = screen minus side padding (40), the actions column and the gap between them (20).
+    const brandWidth = width - 40 - actionsWidth - 20;
+    const wordmarkWidth = landscape ? Math.min(brandWidth - 16, 340) : Math.min(width - 48, 360);
     const playClassic = () => {
         if (canContinue) resumeClassic();
         else startClassic();
@@ -142,9 +144,10 @@ export const HomePage = () => {
                 style={{ paddingTop: insets.top + 12, paddingBottom: insets.bottom + 12, paddingHorizontal: 20 }}
             >
                 <View
-                    className="w-full flex-row justify-end gap-3"
-                    // In landscape the buttons float in the corner so both columns get the full height.
-                    style={landscape ? { position: "absolute", top: insets.top + 12, right: 20, zIndex: 1 } : null}
+                    className={landscape ? "flex-row gap-3" : "w-full flex-row justify-end gap-3"}
+                    // In landscape the buttons float in the top-left corner, above Roo's column, so both columns get the full
+                    // height and nothing covers the mode buttons.
+                    style={landscape ? { position: "absolute", top: insets.top + 12, left: 20, zIndex: 1 } : null}
                 >
                     <IconButton
                         label={`${t("settings.sound")}: ${soundOn ? t("settings.on") : t("settings.off")}`}
@@ -170,7 +173,16 @@ export const HomePage = () => {
                             </Typography>
                         </View>
 
-                        <View className="gap-3" style={{ width: actionsWidth }}>
+                        <ScrollView
+                            style={{ width: actionsWidth, flexGrow: 0, flexShrink: 0 }}
+                            contentContainerStyle={{
+                                flexGrow: 1,
+                                justifyContent: "center",
+                                gap: 12,
+                                paddingVertical: 12,
+                            }}
+                            showsVerticalScrollIndicator={false}
+                        >
                             <View className="gap-3">
                                 <ModeTile
                                     title={t("home.classic")}
@@ -227,7 +239,7 @@ export const HomePage = () => {
                                 />
                             ) : null}
                             <AdBanner />
-                        </View>
+                        </ScrollView>
                     </View>
                 ) : (
                     <>
