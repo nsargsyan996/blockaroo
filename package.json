@@ -21,7 +21,8 @@
         "build:prod": "eas build --profile production --platform all",
         "prepare": "husky",
         "bench:levels": "jest --testPathIgnorePatterns=/node_modules/ src/engine/__bench__",
-        "brand:roo": "python3 scripts/brand/roo.py"
+        "brand:roo": "python3 scripts/brand/roo.py",
+        "build:apk": "eas build --platform android --profile preview"
     },
     "dependencies": {
         "@expo-google-fonts/baloo-2": "^0.4.2",

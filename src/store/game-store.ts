@@ -27,6 +27,8 @@ export interface TLastMove extends TMoveEvent {
     clearedBlocks: TClearedBlock[];
     /** Adventure: stars earned when this move won the level. */
     stars: number;
+    /** Color of the piece that was placed, for the landing effect. */
+    pieceColor: number;
 }
 
 export interface TAdventureProgress {
@@ -109,7 +111,13 @@ export const useGameStore = create<GameStore>()(
                 const finished = result.event.gameOver || result.event.won;
                 const level = result.state.adventure;
                 const stars = result.event.won && level ? starsFor(result.state.moves, level.par) : 0;
-                const lastMove: TLastMove = { ...result.event, id: ++moveId, clearedBlocks, stars };
+                const lastMove: TLastMove = {
+                    ...result.event,
+                    id: ++moveId,
+                    clearedBlocks,
+                    stars,
+                    pieceColor: piece.color,
+                };
 
                 const progress =
                     result.event.won && level

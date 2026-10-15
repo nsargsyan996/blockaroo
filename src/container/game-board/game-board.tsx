@@ -7,8 +7,9 @@ import { TBoardLayout } from "@hooks";
 import { TClearedBlock } from "@store";
 import { palette } from "@theme";
 
+import { Blast, BLAST_DURATION_MS } from "./blast";
 import { BoardCell } from "./board-cell";
-import { ClearBurst } from "./clear-burst";
+import { LandingFx } from "./landing-fx";
 
 export interface TBoardPreview {
     cells: number[];
@@ -22,6 +23,12 @@ export interface TBoardBurst {
     blocks: TClearedBlock[];
     origin: number;
     lines: number;
+    rows: number[];
+    cols: number[];
+    /** Points the move scored, floated up from the landing point (0 hides it). */
+    points: number;
+    /** 3+ lines or a perfect clear: the biggest version of the blast. */
+    big: boolean;
 }
 
 export interface GameBoardProps {
@@ -30,7 +37,7 @@ export interface GameBoardProps {
     layout: TBoardLayout;
     preview: TBoardPreview | null;
     /** Cells where a piece just landed, with an id that changes per move. */
-    landed: { id: number; cells: number[] } | null;
+    landed: { id: number; cells: number[]; color: number } | null;
     burst: TBoardBurst | null;
     onLayout?: () => void;
 }
@@ -46,6 +53,7 @@ export const GameBoard = memo(
         const { boardSize, pitch, cellSize, padding, gap } = layout;
         const inset = padding - BORDER + gap / 2;
         const shake = useSharedValue(0);
+        const bump = useSharedValue(1);
         const [activeBurst, setActiveBurst] = useState<TBoardBurst | null>(null);
 
         const ghost = useMemo(() => (preview ? new Set(preview.cells) : EMPTY), [preview]);
@@ -55,8 +63,8 @@ export const GameBoard = memo(
         useEffect(() => {
             if (!burst || burst.blocks.length === 0) return;
             setActiveBurst(burst);
-            if (burst.lines >= 2) {
-                const amount = Math.min(10, 3 + burst.lines * 1.5);
+            if (burst.lines >= 2 || burst.big) {
+                const amount = Math.min(12, 3 + burst.lines * 2);
                 shake.value = withSequence(
                     withTiming(amount, { duration: 50 }),
                     withTiming(-amount, { duration: 70 }),
@@ -64,11 +72,19 @@ export const GameBoard = memo(
                     withTiming(0, { duration: 60 })
                 );
             }
-            const timer = setTimeout(() => setActiveBurst(null), 1000);
+            const timer = setTimeout(() => setActiveBurst(null), BLAST_DURATION_MS + 100);
             return () => clearTimeout(timer);
         }, [burst, shake]);
 
-        const shakeStyle = useAnimatedStyle(() => ({ transform: [{ translateX: shake.value }] }));
+        // Every drop gives the board a tiny press, so placing a piece feels physical.
+        useEffect(() => {
+            if (!landed) return;
+            bump.value = withSequence(withTiming(0.985, { duration: 70 }), withTiming(1, { duration: 160 }));
+        }, [landed, bump]);
+
+        const shakeStyle = useAnimatedStyle(() => ({
+            transform: [{ translateX: shake.value }, { scale: bump.value }],
+        }));
 
         return (
             <Animated.View style={shakeStyle}>
@@ -104,14 +120,29 @@ export const GameBoard = memo(
                             top={inset + Math.floor(index / BOARD_SIZE) * pitch}
                         />
                     ))}
-                    {activeBurst ? (
-                        <ClearBurst
-                            key={activeBurst.id}
-                            blocks={activeBurst.blocks}
-                            origin={activeBurst.origin}
+                    {landed && landed.cells.length > 0 ? (
+                        <LandingFx
+                            key={`land-${landed.id}`}
+                            cells={landed.cells}
+                            color={landed.color}
                             size={cellSize}
                             pitch={pitch}
                             padding={inset}
+                        />
+                    ) : null}
+                    {activeBurst ? (
+                        <Blast
+                            key={activeBurst.id}
+                            blocks={activeBurst.blocks}
+                            rows={activeBurst.rows}
+                            cols={activeBurst.cols}
+                            origin={activeBurst.origin}
+                            points={activeBurst.points}
+                            big={activeBurst.big}
+                            size={cellSize}
+                            pitch={pitch}
+                            padding={inset}
+                            boardSize={boardSize}
                         />
                     ) : null}
                 </View>

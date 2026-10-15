@@ -25,6 +25,7 @@ const ADMOB_TEST_APP_ID = {
 export default ({ config }: ConfigContext): ExpoConfig => ({
     ...config,
     name: APP_NAME[APP_VARIANT],
+    owner: "nsargsyan",
     slug: "blockaroo",
     scheme: "blockaroo",
     version: "1.0.0",
@@ -84,5 +85,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
     extra: {
         appVariant: APP_VARIANT,
+        eas: {
+            projectId: "b3678549-4900-4483-b266-09277f2b30b5",
+        },
     },
 });

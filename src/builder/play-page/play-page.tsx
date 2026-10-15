@@ -193,7 +193,16 @@ export const PlayPage = () => {
 
     const burst = useMemo<TBoardBurst | null>(() => {
         if (reviveFlash && (!lastMove || reviveFlash.id > lastMove.id)) {
-            return { id: reviveFlash.id, blocks: reviveFlash.blocks, origin: cellIndex(4, 4), lines: 3 };
+            return {
+                id: reviveFlash.id,
+                blocks: reviveFlash.blocks,
+                origin: cellIndex(4, 4),
+                lines: 3,
+                rows: [],
+                cols: [],
+                points: 0,
+                big: true,
+            };
         }
         if (lastMove && lastMove.lines > 0) {
             return {
@@ -201,12 +210,19 @@ export const PlayPage = () => {
                 blocks: lastMove.clearedBlocks,
                 origin: lastMove.placedCells[0] ?? 0,
                 lines: lastMove.lines,
+                rows: lastMove.clearedRows,
+                cols: lastMove.clearedCols,
+                points: lastMove.points,
+                big: lastMove.lines >= 3 || lastMove.perfectClear,
             };
         }
         return null;
     }, [lastMove, reviveFlash]);
 
-    const landed = useMemo(() => (lastMove ? { id: lastMove.id, cells: lastMove.placedCells } : null), [lastMove]);
+    const landed = useMemo(
+        () => (lastMove ? { id: lastMove.id, cells: lastMove.placedCells, color: lastMove.pieceColor } : null),
+        [lastMove]
+    );
     const activePiece = game && activeSlot >= 0 ? game.tray[activeSlot] : null;
     const adventure = game?.adventure ?? null;
 
