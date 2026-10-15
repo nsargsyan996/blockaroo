@@ -7,9 +7,6 @@ a whole row or column and it clears. Clear lines back to back to build a streak.
 - **Adventure**: 60 levels. Most hide gems (diamonds, stars, hearts) inside the starting blocks; clear their lines to
   collect them. Every fifth level is a score challenge. Finish under par for 3 stars; each win unlocks the next level.
 
-Built with the same stack as `frontend-platform/apps/cex-mobile`: Expo 54, React Native 0.81, expo-router, NativeWind,
-Reanimated 4, Gesture Handler, Zustand, react-i18next, Jest, ESLint 9 and Prettier.
-
 ## Run it
 
 ```sh
