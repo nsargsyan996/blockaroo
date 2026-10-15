@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 260">
+<defs>
+<linearGradient id="fur" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFC27A"/><stop offset="1" stop-color="#F2893D"/></linearGradient>
+<linearGradient id="furDeep" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F59A4C"/><stop offset="1" stop-color="#D96A28"/></linearGradient>
+<linearGradient id="belly" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFD6A3"/></linearGradient>
+<linearGradient id="pouch" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD9A8"/><stop offset="1" stop-color="#F4B877"/></linearGradient>
+<linearGradient id="earIn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFB3C1"/><stop offset="1" stop-color="#FF8FA6"/></linearGradient>
+<radialGradient id="iris" cx="0.45" cy="0.4" r="0.6"><stop offset="0" stop-color="#5B3FA0"/><stop offset="1" stop-color="#1E1240"/></radialGradient>
+<radialGradient id="blush" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#FF7F9C" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7F9C" stop-opacity="0"/></radialGradient>
+<linearGradient id="gem" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8C96"/><stop offset="1" stop-color="#E5404F"/></linearGradient>
+</defs>
+<ellipse cx="120" cy="190" rx="54" ry="50" fill="url(#fur)" stroke="#3D1F2B" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/><ellipse cx="120" cy="197" rx="36" ry="37" fill="url(#belly)"/><g transform="rotate(-8 120 186)"><rect x="104" y="170" width="32" height="32" rx="8" fill="#C93A4B" stroke="#3D1F2B" stroke-width="3.5"/><rect x="106.5" y="172" width="27" height="25" rx="6" fill="url(#gem)"/><rect x="110" y="175" width="9" height="5" rx="2.5" fill="#FFFFFF" opacity="0.75"/></g><path d="M86 199 Q120 214 154 199 Q153 229 120 231 Q87 229 86 199 Z" fill="url(#pouch)" stroke="#3D1F2B" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M96 208 Q120 216 144 208" fill="none" stroke="#E2A15F" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

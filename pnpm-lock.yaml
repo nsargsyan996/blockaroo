@@ -11,6 +11,9 @@ importers:
       '@expo-google-fonts/baloo-2':
         specifier: ^0.4.2
         version: 0.4.2
+      '@expo-google-fonts/rubik':
+        specifier: ^0.4.2
+        version: 0.4.2
       '@expo/metro-runtime':
         specifier: ~6.1.2
         version: 6.1.2(expo@54.0.37)(react-dom@19.1.0(react@19.1.0))(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(react@19.1.0)
@@ -823,6 +826,9 @@ packages:
 
   '@expo-google-fonts/baloo-2@0.4.2':
     resolution: {integrity: sha512-uvrw1I+sP72PY8xROJQ6CMiGHu9+WJCdi72Q+OiWpQ3sKsIRyIEXimDfgUnkk2vpWVej0JX9fLc87iDmjKE86A==}
+
+  '@expo-google-fonts/rubik@0.4.2':
+    resolution: {integrity: sha512-WJtpQEw4lDKjCVnVIBF9qiZn+BTOB3juWvSchpZ+mnHFFV0gh4PyOvLLJCOMmKVgSj/pzFDtNe4apqexrD0+pA==}
 
   '@expo/cli@54.0.27':
     resolution: {integrity: sha512-BxKOr6e8wmUwhGSyEVKY+CHWgS3Cre9ibgx1QWcdCenKTVKAz62qGmYL51q0lCcKg6vQY+4Usw9RK5Il4ZFaIA==}
@@ -6779,6 +6785,8 @@ snapshots:
       levn: 0.4.1
 
   '@expo-google-fonts/baloo-2@0.4.2': {}
+
+  '@expo-google-fonts/rubik@0.4.2': {}
 
   '@expo/cli@54.0.27(expo-router@6.0.24)(expo@54.0.37)(react-native@0.81.5(@babel/core@7.29.7)(@types/react@19.1.17)(react@19.1.0))(typescript@5.7.3)':
     dependencies:

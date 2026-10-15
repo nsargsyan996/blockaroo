@@ -30,9 +30,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
-    userInterfaceStyle: "light",
+    userInterfaceStyle: "dark",
     newArchEnabled: true,
-    backgroundColor: "#6FD3FF",
+    backgroundColor: "#140F38",
     ios: {
         bundleIdentifier: BUNDLE_ID[APP_VARIANT],
         supportsTablet: true,
@@ -44,7 +44,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         package: BUNDLE_ID[APP_VARIANT],
         adaptiveIcon: {
             foregroundImage: "./assets/images/adaptive-icon.png",
-            backgroundColor: "#6FD3FF",
+            backgroundColor: "#140F38",
         },
         edgeToEdgeEnabled: true,
         // A kids' game has no reason to ask for the advertising ID; the ads SDK still works without it.
@@ -65,7 +65,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
                 image: "./assets/images/splash-icon.png",
                 imageWidth: 220,
                 resizeMode: "contain",
-                backgroundColor: "#6FD3FF",
+                backgroundColor: "#140F38",
             },
         ],
         [

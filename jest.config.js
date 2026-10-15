@@ -1,7 +1,8 @@
 module.exports = {
     preset: "jest-expo",
     roots: ["<rootDir>/src"],
-    testPathIgnorePatterns: ["/node_modules/", "/dist/"],
+    // Benchmarks (pnpm bench:levels) are slow simulations, not unit tests.
+    testPathIgnorePatterns: ["/node_modules/", "/dist/", "/__bench__/"],
     transformIgnorePatterns: [
         "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|react-native-svg|nativewind|react-native-css-interop)",
     ],

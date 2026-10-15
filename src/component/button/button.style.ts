@@ -1,33 +1,30 @@
 import { cva } from "class-variance-authority";
 
-/** The colored face of the chunky button. The darker "edge" under it is drawn by the wrapper. */
-export const buttonFaceVariants = cva(
-    "flex-row items-center justify-center gap-3 rounded-3xl border-[3px] border-ink",
-    {
-        variants: {
-            variant: {
-                primary: "bg-sun",
-                success: "bg-leaf",
-                secondary: "bg-white",
-            },
-            size: {
-                lg: "min-h-[72px] px-10",
-                md: "min-h-[58px] px-7",
-            },
+/** The face of the button. The darker "edge" under it is drawn by the wrapper and shows the press depth. */
+export const buttonFaceVariants = cva("flex-row items-center justify-center gap-3 rounded-2xl", {
+    variants: {
+        variant: {
+            primary: "bg-sun",
+            success: "bg-leaf",
+            secondary: "border border-white/15 bg-white/10",
         },
-        defaultVariants: {
-            variant: "primary",
-            size: "lg",
+        size: {
+            lg: "min-h-[64px] px-8",
+            md: "min-h-[52px] px-6",
         },
-    }
-);
+    },
+    defaultVariants: {
+        variant: "primary",
+        size: "lg",
+    },
+});
 
-export const buttonEdgeVariants = cva("rounded-3xl border-[3px] border-ink", {
+export const buttonEdgeVariants = cva("rounded-2xl", {
     variants: {
         variant: {
             primary: "bg-sun-shade",
             success: "bg-leaf-shade",
-            secondary: "bg-sky-deep",
+            secondary: "bg-white/5",
         },
     },
     defaultVariants: {
@@ -35,4 +32,4 @@ export const buttonEdgeVariants = cva("rounded-3xl border-[3px] border-ink", {
     },
 });
 
-export const BUTTON_DEPTH = 6;
+export const BUTTON_DEPTH = 5;

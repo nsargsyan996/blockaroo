@@ -5,14 +5,14 @@ export const typographyVariants = cva("", {
         variant: {
             hero: "font-display text-5xl leading-[56px]",
             title: "font-display text-3xl leading-[38px]",
-            subtitle: "font-display text-xl leading-7",
-            body: "font-body text-lg leading-6",
-            caption: "font-body text-sm uppercase leading-5 tracking-widest",
+            subtitle: "font-body text-xl leading-7",
+            body: "font-medium text-base leading-6",
+            caption: "font-body text-xs uppercase leading-4 tracking-[2px]",
         },
         tone: {
-            ink: "text-ink",
-            soft: "text-ink-soft",
             white: "text-white",
+            soft: "text-soft",
+            ink: "text-ink",
             sun: "text-sun",
         },
         align: {
@@ -22,7 +22,7 @@ export const typographyVariants = cva("", {
     },
     defaultVariants: {
         variant: "body",
-        tone: "ink",
+        tone: "white",
         align: "left",
     },
 });

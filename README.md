@@ -1,7 +1,11 @@
 # Blockaroo
 
-A block puzzle game for kids, starring Roo the kangaroo. You drag pieces onto an 8×8 board. Fill a whole row or column
-and it clears. Clear lines back to back to build a streak, and the game ends when none of your three pieces fit.
+A block puzzle game for all ages (and safe for kids), starring Roo the kangaroo. You drag pieces onto an 8×8 board. Fill
+a whole row or column and it clears. Clear lines back to back to build a streak.
+
+- **Classic**: endless. The game ends when none of your three pieces fit. Chase your best score.
+- **Adventure**: 60 levels. Most hide gems (diamonds, stars, hearts) inside the starting blocks; clear their lines to
+  collect them. Every fifth level is a score challenge. Finish under par for 3 stars; each win unlocks the next level.
 
 Built with the same stack as `frontend-platform/apps/cex-mobile`: Expo 54, React Native 0.81, expo-router, NativeWind,
 Reanimated 4, Gesture Handler, Zustand, react-i18next, Jest, ESLint 9 and Prettier.
@@ -13,7 +17,7 @@ pnpm install
 pnpm start            # Expo Go works: ads are skipped there, everything else runs
 pnpm ios              # dev build on the iOS simulator (needed to see test ads)
 pnpm android          # dev build on an Android emulator or device
-pnpm web              # quick check in the browser (no ads, no haptics)
+pnpm web              # quick check in the browser: labelled test ads stand in for real ones, no haptics
 ```
 
 ## Quality
@@ -59,18 +63,21 @@ One alias, `@*` → `src/*`, as in cex-mobile. Components follow the `x.tsx` / `
   slowly up to `DIFFICULTY_MAX_SCORE`.
 - **Scoring** (`scoring.ts`): 1 point per block placed. A clear scores 80 / 240 / 480 / 800 for 1 / 2 / 3 / 4 lines,
   multiplied by the streak. A streak survives up to 2 placements without a clear. Clearing the whole board adds +500.
-- **Revive** (`game.ts`): one per game. It clears the 3 most crowded rows and deals friendly pieces.
+- **Revive** (`game.ts`): one per game. It clears the 3 most crowded rows (never gem blocks) and deals friendly pieces.
+- **Levels** (`levels.ts`): generated from the level number, so they are the same on every device with no data file.
+  Board fill, gem count, gem kinds and piece size ramp up with the level. `pnpm bench:levels` lets a simple bot play
+  every level and prints win rates, which is the quickest way to check a tuning change.
 - **Seeded RNG**: a saved game resumes with the same upcoming pieces.
 
 Tuning lives in `src/engine/constants.ts` (rules) and `src/config/game.config.ts` (feel: drag lift, snap tolerance, tray
 size).
 
-### Kid-friendly touches
+### Easy-to-play touches
 
 - A dragged piece floats 1.4 cells above the finger, so a small hand never hides where it will land.
 - Drops that are slightly off snap to the nearest valid spot.
 - Pieces that can't fit anywhere are dimmed in the tray.
-- Big touch targets, rounded type (Baloo 2), and praise words instead of numbers.
+- Big touch targets, clear type (Rubik), and praise words alongside the score.
 - Sound follows the iPhone silent switch. Sound and vibration toggles are on the home screen.
 - Idle animation turns off when the device asks for reduced motion.
 
@@ -89,7 +96,7 @@ is removed, and iOS never shows the tracking prompt.
 ```sh
 eas env:create --environment production --name ADMOB_ANDROID_APP_ID --value ca-app-pub-...~...
 eas env:create --environment production --name EXPO_PUBLIC_ADMOB_REWARDED_ANDROID --value ca-app-pub-.../...
-# ...and the iOS + interstitial equivalents
+# ...and the iOS, interstitial and banner (EXPO_PUBLIC_ADMOB_BANNER_*) equivalents
 ```
 
 In the AdMob console, also mark the app as child-directed and set the max ad content rating to G.
@@ -121,6 +128,8 @@ them in `app.config.ts` before the first store upload.
 
 ## Brand
 
+- Night-sky look with jewel blocks, so it reads as a casual game for everyone rather than a toddler app. The wordmark
+  uses block-shaped O's.
 - Assets in `src/assets/brand` (Roo happy / oops, wordmark, icon) are original vector art. After editing an SVG, run
   `pnpm brand:build` to regenerate the app icon, adaptive icon, splash and favicon PNGs.
 - The palette is in `src/theme/palette.ts`, mirrored in `tailwind.config.js`.

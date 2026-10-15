@@ -44,7 +44,12 @@ export const Button = memo(function Button(props: ButtonProps) {
             <Animated.View style={faceStyle}>
                 <View className={buttonFaceVariants({ variant, size })}>
                     {icon}
-                    <Typography variant={size === "md" ? "subtitle" : "title"}>{title}</Typography>
+                    <Typography
+                        variant={size === "md" ? "subtitle" : "title"}
+                        tone={variant === "secondary" ? "white" : "ink"}
+                    >
+                        {title}
+                    </Typography>
                 </View>
             </Animated.View>
         </Pressable>

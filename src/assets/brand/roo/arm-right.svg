@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 260">
+<defs>
+<linearGradient id="fur" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFC27A"/><stop offset="1" stop-color="#F2893D"/></linearGradient>
+<linearGradient id="furDeep" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F59A4C"/><stop offset="1" stop-color="#D96A28"/></linearGradient>
+<linearGradient id="belly" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFD6A3"/></linearGradient>
+<linearGradient id="pouch" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD9A8"/><stop offset="1" stop-color="#F4B877"/></linearGradient>
+<linearGradient id="earIn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFB3C1"/><stop offset="1" stop-color="#FF8FA6"/></linearGradient>
+<radialGradient id="iris" cx="0.45" cy="0.4" r="0.6"><stop offset="0" stop-color="#5B3FA0"/><stop offset="1" stop-color="#1E1240"/></radialGradient>
+<radialGradient id="blush" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#FF7F9C" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7F9C" stop-opacity="0"/></radialGradient>
+<linearGradient id="gem" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8C96"/><stop offset="1" stop-color="#E5404F"/></linearGradient>
+</defs>
+<ellipse cx="148" cy="188" rx="11" ry="16" transform="rotate(28 148 188)" fill="url(#fur)" stroke="#3D1F2B" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+</svg>

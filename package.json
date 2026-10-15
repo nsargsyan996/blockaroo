@@ -19,10 +19,13 @@
         "build:dev": "eas build --profile development",
         "build:preview": "eas build --profile preview",
         "build:prod": "eas build --profile production --platform all",
-        "prepare": "husky"
+        "prepare": "husky",
+        "bench:levels": "jest --testPathIgnorePatterns=/node_modules/ src/engine/__bench__",
+        "brand:roo": "python3 scripts/brand/roo.py"
     },
     "dependencies": {
         "@expo-google-fonts/baloo-2": "^0.4.2",
+        "@expo-google-fonts/rubik": "^0.4.2",
         "@expo/metro-runtime": "~6.1.2",
         "@react-native-async-storage/async-storage": "2.2.0",
         "class-variance-authority": "^0.7.1",

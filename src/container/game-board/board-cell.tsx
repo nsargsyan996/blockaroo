@@ -8,7 +8,7 @@ import Animated, {
     withTiming,
 } from "react-native-reanimated";
 
-import { Block } from "@component";
+import { Block, GemIcon } from "@component";
 import { palette } from "@theme";
 
 export interface BoardCellProps {
@@ -17,6 +17,8 @@ export interface BoardCellProps {
     ghostColor: number;
     /** Color to show when this cell's line would clear, else 0. */
     highlightColor: number;
+    /** Gem inside this cell's block (adventure), else 0. */
+    gem: number;
     /** Changes when a block lands here, which plays the landing bounce. */
     popId: number;
     size: number;
@@ -25,7 +27,7 @@ export interface BoardCellProps {
 }
 
 export const BoardCell = memo(function BoardCell(props: BoardCellProps) {
-    const { color, ghostColor, highlightColor, popId, size, left, top } = props;
+    const { color, ghostColor, highlightColor, gem, popId, size, left, top } = props;
     const scale = useSharedValue(1);
 
     useEffect(() => {
@@ -42,15 +44,22 @@ export const BoardCell = memo(function BoardCell(props: BoardCellProps) {
                 style={{
                     position: "absolute",
                     inset: 0,
-                    borderRadius: size * 0.24,
+                    borderRadius: size * 0.22,
                     backgroundColor: palette.boardCell,
-                    borderTopWidth: 2,
-                    borderTopColor: palette.boardCellShade,
+                    borderBottomWidth: 1.5,
+                    borderBottomColor: palette.boardCellEdge,
                 }}
             />
             {shown ? (
                 <Animated.View style={popStyle}>
                     <Block color={shown} size={size} />
+                    {gem ? (
+                        <View
+                            style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center" }}
+                        >
+                            <GemIcon gem={gem} size={size * 0.62} />
+                        </View>
+                    ) : null}
                 </Animated.View>
             ) : ghostColor ? (
                 <Block color={ghostColor} size={size} style={{ opacity: 0.45 }} />

@@ -2,7 +2,7 @@ import { forwardRef, memo, useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 
-import { BOARD_SIZE, TBoard } from "@engine";
+import { BOARD_SIZE, TBoard, TGem } from "@engine";
 import { TBoardLayout } from "@hooks";
 import { TClearedBlock } from "@store";
 import { palette } from "@theme";
@@ -26,6 +26,7 @@ export interface TBoardBurst {
 
 export interface GameBoardProps {
     board: TBoard;
+    gems: TGem[];
     layout: TBoardLayout;
     preview: TBoardPreview | null;
     /** Cells where a piece just landed, with an id that changes per move. */
@@ -35,10 +36,13 @@ export interface GameBoardProps {
 }
 
 const EMPTY = new Set<number>();
-const BORDER = 4;
+const BORDER = 2;
 
 export const GameBoard = memo(
-    forwardRef<View, GameBoardProps>(function GameBoard({ board, layout, preview, landed, burst, onLayout }, ref) {
+    forwardRef<View, GameBoardProps>(function GameBoard(
+        { board, gems, layout, preview, landed, burst, onLayout },
+        ref
+    ) {
         const { boardSize, pitch, cellSize, padding, gap } = layout;
         const inset = padding - BORDER + gap / 2;
         const shake = useSharedValue(0);
@@ -75,21 +79,22 @@ export const GameBoard = memo(
                     style={{
                         width: boardSize,
                         height: boardSize,
-                        borderRadius: 26,
+                        borderRadius: 22,
                         backgroundColor: palette.board,
                         borderWidth: BORDER,
-                        borderColor: palette.ink,
-                        shadowColor: palette.ink,
-                        shadowOpacity: 0.35,
-                        shadowRadius: 0,
-                        shadowOffset: { width: 0, height: 6 },
-                        elevation: 6,
+                        borderColor: palette.glassBorder,
+                        shadowColor: "#000000",
+                        shadowOpacity: 0.45,
+                        shadowRadius: 24,
+                        shadowOffset: { width: 0, height: 12 },
+                        elevation: 10,
                     }}
                 >
                     {board.map((color, index) => (
                         <BoardCell
                             key={index}
                             color={color}
+                            gem={gems[index] ?? 0}
                             ghostColor={preview && ghost.has(index) ? preview.color : 0}
                             // Cells in a line that would clear light up in the dragged piece's color.
                             highlightColor={preview && highlight.has(index) ? preview.color : 0}

@@ -38,7 +38,7 @@ interface TraySlotProps extends Omit<PieceTrayProps, "tray" | "activeSlot"> {
 
 const TraySlot = memo(function TraySlot(props: TraySlotProps) {
     const { piece, slot, board, layout, drag, hidden, disabled, onPickUp, onHover, onRelease } = props;
-    const { trayPitch, pitch, gap, boardSize, trayHeight } = layout;
+    const { trayPitch, pitch, gap, slotWidth, slotHeight } = layout;
     const enter = useSharedValue(0);
 
     // New pieces bounce into the tray one after another.
@@ -91,7 +91,7 @@ const TraySlot = memo(function TraySlot(props: TraySlotProps) {
     return (
         <GestureDetector gesture={gesture}>
             <View
-                style={{ width: boardSize / 3, height: trayHeight }}
+                style={{ width: slotWidth, height: slotHeight }}
                 className="items-center justify-center"
                 accessibilityRole="button"
                 accessibilityLabel={piece ? `Piece ${slot + 1}` : undefined}
@@ -111,7 +111,10 @@ const TraySlot = memo(function TraySlot(props: TraySlotProps) {
     );
 });
 
-/** The three pieces to place. Each slot is a big touch target; a piece that cannot fit anywhere is dimmed. */
+/**
+ * The three pieces to place, side by side: under the board in portrait, in the side column in landscape. Each slot
+ * is a big touch target; a piece that cannot fit anywhere is dimmed.
+ */
 export const PieceTray = memo(function PieceTray({ tray, activeSlot, ...rest }: PieceTrayProps) {
     return (
         <View className="flex-row">

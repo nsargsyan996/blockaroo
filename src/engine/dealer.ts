@@ -15,6 +15,8 @@ const DEAL_ATTEMPTS = 14;
 
 export interface TDealOptions {
     score: number;
+    /** Overrides the score-based difficulty (adventure levels set their own). */
+    difficulty?: number;
     /** Revive deals and the first deal of a game only use small, friendly pieces. */
     friendly?: boolean;
 }
@@ -23,13 +25,13 @@ export interface TDealOptions {
 export const difficultyFor = (score: number) => Math.min(1, Math.max(0, score / DIFFICULTY_MAX_SCORE));
 
 export const tierWeights = (difficulty: number): Record<TShapeTier, number> => ({
-    1: 3.2 - 1.6 * difficulty,
+    1: 2.6 - 1.4 * difficulty,
     2: 3,
-    3: 0.8 + 1.4 * difficulty,
+    3: 1.1 + 1.6 * difficulty,
 });
 
 /** Chance that one piece of a deal is picked because it completes a line right now. */
-export const helpChance = (difficulty: number) => 0.4 - 0.2 * difficulty;
+export const helpChance = (difficulty: number) => 0.3 - 0.2 * difficulty;
 
 /**
  * True when the shapes can all be placed one after another in some order, taking line clears into account.
@@ -67,8 +69,9 @@ export const helpfulShapes = (board: TBoard, pool: TShape[] = SHAPES): TShape[] 
 const pickShapes = (rng: TRng, pool: TShape[], weights: Record<TShapeTier, number>, count: number): TShape[] =>
     Array.from({ length: count }, () => pickWeighted(rng, pool, (shape) => weights[shape.tier]));
 
-export const dealShapes = (board: TBoard, rng: TRng, { score, friendly = false }: TDealOptions): TShape[] => {
-    const difficulty = friendly ? 0 : difficultyFor(score);
+export const dealShapes = (board: TBoard, rng: TRng, options: TDealOptions): TShape[] => {
+    const { score, friendly = false } = options;
+    const difficulty = friendly ? 0 : (options.difficulty ?? difficultyFor(score));
     const pool = friendly ? SHAPES.filter((shape) => shape.tier < 3) : SHAPES;
     const weights = tierWeights(difficulty);
 

@@ -11,7 +11,7 @@ export interface IconProps {
 const stroke = (color: string) =>
     ({ stroke: color, strokeWidth: 2.6, strokeLinecap: "round", strokeLinejoin: "round", fill: "none" }) as const;
 
-export const HomeIcon = memo(function HomeIcon({ size = 26, color = palette.ink }: IconProps) {
+export const HomeIcon = memo(function HomeIcon({ size = 26, color = palette.text }: IconProps) {
     return (
         <Svg width={size} height={size} viewBox="0 0 24 24">
             <Path d="M3.5 11 12 4l8.5 7" {...stroke(color)} />
@@ -22,7 +22,7 @@ export const HomeIcon = memo(function HomeIcon({ size = 26, color = palette.ink 
 
 export const SoundIcon = memo(function SoundIcon({
     size = 26,
-    color = palette.ink,
+    color = palette.text,
     off,
 }: IconProps & { off?: boolean }) {
     return (
@@ -42,7 +42,7 @@ export const SoundIcon = memo(function SoundIcon({
 
 export const VibrationIcon = memo(function VibrationIcon({
     size = 26,
-    color = palette.ink,
+    color = palette.text,
     off,
 }: IconProps & { off?: boolean }) {
     return (
@@ -65,15 +65,15 @@ export const CrownIcon = memo(function CrownIcon({ size = 22, color = palette.su
             <Path
                 d="M3.5 8.5 8 12l4-6.5 4 6.5 4.5-3.5-1.8 9.5H5.3z"
                 fill={color}
-                stroke={palette.ink}
-                strokeWidth={2}
+                stroke={palette.sunShade}
+                strokeWidth={1.5}
                 strokeLinejoin="round"
             />
         </Svg>
     );
 });
 
-export const PlayIcon = memo(function PlayIcon({ size = 26, color = palette.ink }: IconProps) {
+export const PlayIcon = memo(function PlayIcon({ size = 26, color = palette.text }: IconProps) {
     return (
         <Svg width={size} height={size} viewBox="0 0 24 24">
             <Path d="M7 4.5v15l12-7.5z" fill={color} stroke={color} strokeWidth={2} strokeLinejoin="round" />
@@ -81,7 +81,7 @@ export const PlayIcon = memo(function PlayIcon({ size = 26, color = palette.ink 
     );
 });
 
-export const VideoIcon = memo(function VideoIcon({ size = 26, color = palette.ink }: IconProps) {
+export const VideoIcon = memo(function VideoIcon({ size = 26, color = palette.text }: IconProps) {
     return (
         <Svg width={size} height={size} viewBox="0 0 24 24">
             <Rect x="2.5" y="6" width="13" height="12" rx="2.5" {...stroke(color)} />

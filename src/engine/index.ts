@@ -3,6 +3,7 @@ export * from "./constants";
 export * from "./dealer";
 export * from "./engine.type";
 export * from "./game";
+export * from "./levels";
 export * from "./rng";
 export * from "./scoring";
 export * from "./shapes";

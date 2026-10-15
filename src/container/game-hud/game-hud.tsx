@@ -9,34 +9,40 @@ import { formatScore } from "@util";
 export interface GameHudProps {
     score: number;
     best: number;
+    /** Adventure only: shows the level instead of the best score. */
+    levelId?: number;
     onHome: () => void;
 }
 
-export const GameHud = memo(function GameHud({ score, best, onHome }: GameHudProps) {
+export const GameHud = memo(function GameHud({ score, best, levelId, onHome }: GameHudProps) {
     const { t } = useTranslation();
     const shown = useCountUp(score);
     return (
-        <View className="w-full flex-row items-center justify-between px-1">
-            <IconButton label={t("game.home")} onPress={onHome}>
+        <View className="w-full flex-row items-center justify-between">
+            <IconButton label={levelId ? t("game.levels") : t("game.home")} onPress={onHome}>
                 <HomeIcon />
             </IconButton>
             <View className="items-center" accessibilityLabel={`${t("game.score")} ${score}`}>
-                <Typography variant="caption" tone="white">
-                    {t("game.score")}
+                <Typography variant="caption" tone="soft">
+                    {levelId ? t("game.level", { level: levelId }) : t("game.score")}
                 </Typography>
-                <Typography variant="hero" tone="white" style={{ fontVariant: ["tabular-nums"] }}>
+                <Typography variant="hero" style={{ fontVariant: ["tabular-nums"] }}>
                     {formatScore(shown)}
                 </Typography>
             </View>
-            <View
-                className="min-w-[56px] items-center rounded-2xl border-[3px] border-ink bg-white px-2 py-1"
-                accessibilityLabel={`${t("game.best")} ${best}`}
-            >
-                <CrownIcon />
-                <Typography variant="subtitle" style={{ fontVariant: ["tabular-nums"] }}>
-                    {formatScore(best)}
-                </Typography>
-            </View>
+            {levelId ? (
+                <View className="w-12" />
+            ) : (
+                <View
+                    className="min-w-[56px] flex-row items-center gap-1 rounded-full border border-white/15 bg-white/10 px-3 py-2"
+                    accessibilityLabel={`${t("game.best")} ${best}`}
+                >
+                    <CrownIcon size={18} />
+                    <Typography variant="subtitle" className="text-base" style={{ fontVariant: ["tabular-nums"] }}>
+                        {formatScore(best)}
+                    </Typography>
+                </View>
+            )}
         </View>
     );
 });

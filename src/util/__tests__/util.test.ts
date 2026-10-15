@@ -13,11 +13,11 @@ describe("util", () => {
 
     it("cheers louder for bigger clears", () => {
         expect(praiseFor({ lines: 0, combo: 0, perfectClear: false })).toBeNull();
-        expect(praiseFor({ lines: 1, combo: 1, perfectClear: false })).toBe("nice");
+        expect(praiseFor({ lines: 1, combo: 1, perfectClear: false })).toBe("good");
         expect(praiseFor({ lines: 2, combo: 1, perfectClear: false })).toBe("great");
-        expect(praiseFor({ lines: 1, combo: 3, perfectClear: false })).toBe("super");
+        expect(praiseFor({ lines: 1, combo: 3, perfectClear: false })).toBe("excellent");
         expect(praiseFor({ lines: 3, combo: 2, perfectClear: false })).toBe("amazing");
-        expect(praiseFor({ lines: 3, combo: 4, perfectClear: false })).toBe("rootastic");
+        expect(praiseFor({ lines: 3, combo: 4, perfectClear: false })).toBe("unbelievable");
         expect(praiseFor({ lines: 1, combo: 1, perfectClear: true })).toBe("perfect");
     });
 });

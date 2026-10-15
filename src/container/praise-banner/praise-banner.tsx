@@ -13,7 +13,6 @@ import Animated, {
 
 import { Typography } from "@component";
 import { TLastMove } from "@store";
-import { palette } from "@theme";
 import { praiseFor } from "@util";
 
 /** Cheers over the board after a clear: "Great!", "Super!", plus the streak count. */
@@ -46,22 +45,22 @@ export const PraiseBanner = memo(function PraiseBanner({ move }: { move: TLastMo
     return (
         <View pointerEvents="none" className="absolute inset-0 items-center justify-center">
             <Animated.View style={[style, { alignItems: "center" }]}>
-                <View>
-                    {/* A dark copy offset underneath gives the word a chunky outline that reads on any board. */}
-                    <Typography
-                        variant="hero"
-                        align="center"
-                        style={{ position: "absolute", top: 4, left: 0, right: 0, color: palette.ink }}
-                    >
-                        {shown.word}
-                    </Typography>
-                    <Typography variant="hero" tone="white" align="center">
-                        {shown.word}
-                    </Typography>
-                </View>
+                <Typography
+                    variant="hero"
+                    align="center"
+                    style={{
+                        textShadowColor: "rgba(143,107,255,0.9)",
+                        textShadowRadius: 18,
+                        textShadowOffset: { width: 0, height: 2 },
+                    }}
+                >
+                    {shown.word}
+                </Typography>
                 {shown.combo > 1 ? (
-                    <View className="mt-1 rounded-full border-[3px] border-ink bg-sun px-4">
-                        <Typography variant="subtitle">{t("game.combo", { count: shown.combo })}</Typography>
+                    <View className="mt-1 rounded-full bg-sun px-4 py-0.5">
+                        <Typography variant="subtitle" tone="ink">
+                            {t("game.combo", { count: shown.combo })}
+                        </Typography>
                     </View>
                 ) : null}
             </Animated.View>

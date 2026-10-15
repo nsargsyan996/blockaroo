@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import { Baloo2_600SemiBold, Baloo2_800ExtraBold, useFonts } from "@expo-google-fonts/baloo-2";
+import { DevAdOverlay } from "@container";
+import { Rubik_500Medium, Rubik_600SemiBold, Rubik_800ExtraBold, useFonts } from "@expo-google-fonts/rubik";
 import { ads, initSounds } from "@service";
 import { palette } from "@theme";
 import { Stack } from "expo-router";
@@ -14,7 +15,7 @@ import "./global.css";
 SplashScreen.preventAutoHideAsync().catch(() => undefined);
 
 export default function RootLayout() {
-    const [fontsLoaded] = useFonts({ Baloo2_600SemiBold, Baloo2_800ExtraBold });
+    const [fontsLoaded] = useFonts({ Rubik_500Medium, Rubik_600SemiBold, Rubik_800ExtraBold });
 
     useEffect(() => {
         initSounds();
@@ -29,15 +30,16 @@ export default function RootLayout() {
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
-            <StatusBar style="dark" />
+            <StatusBar style="light" />
             <Stack
                 screenOptions={{
                     headerShown: false,
                     animation: "fade",
-                    contentStyle: { backgroundColor: palette.sky },
+                    contentStyle: { backgroundColor: palette.night },
                     gestureEnabled: false,
                 }}
             />
+            <DevAdOverlay />
         </GestureHandlerRootView>
     );
 }

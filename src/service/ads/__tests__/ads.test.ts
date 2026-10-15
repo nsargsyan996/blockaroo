@@ -1,6 +1,12 @@
+import { DEV_PACING, PRODUCTION_PACING } from "@config";
+
 import { ads as nativeAds } from "../ads.native";
 import { ads as webAds } from "../ads.web";
-import { shouldShowInterstitial } from "../interstitial-policy";
+import { useDevAdStore } from "../dev-ad-store";
+import { shouldShowInterstitial as policy } from "../interstitial-policy";
+
+const shouldShowInterstitial = (args: { gamesFinished: number; lastShownAt: number | null; now: number }) =>
+    policy({ ...args, pacing: PRODUCTION_PACING });
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
 
@@ -21,13 +27,31 @@ describe("interstitial pacing", () => {
     });
 });
 
-describe("web ads", () => {
-    it("never offers a revive video", async () => {
+describe("dev pacing", () => {
+    it("shows an interstitial every second game for testing", () => {
+        expect(policy({ gamesFinished: 1, lastShownAt: null, now: 0, pacing: DEV_PACING })).toBe(false);
+        expect(policy({ gamesFinished: 2, lastShownAt: 0, now: 0, pacing: DEV_PACING })).toBe(true);
+    });
+});
+
+describe("web test ads", () => {
+    it("plays a stand-in rewarded video in development", async () => {
         await webAds.init();
-        expect(webAds.isRewardedReady()).toBe(false);
-        await expect(webAds.showRewarded()).resolves.toBe(false);
-        await expect(webAds.maybeShowInterstitial(10)).resolves.toBeUndefined();
+        expect(webAds.isRewardedReady()).toBe(true);
+        const shown = webAds.showRewarded();
+        expect(useDevAdStore.getState().kind).toBe("rewarded");
+        useDevAdStore.getState().finish(true);
+        await expect(shown).resolves.toBe(true);
         webAds.onRewardedReadyChange(() => undefined)();
+    });
+
+    it("shows a stand-in interstitial only when pacing allows", async () => {
+        await webAds.maybeShowInterstitial(1);
+        expect(useDevAdStore.getState().kind).toBeNull();
+        const shown = webAds.maybeShowInterstitial(2);
+        expect(useDevAdStore.getState().kind).toBe("interstitial");
+        useDevAdStore.getState().finish(false);
+        await expect(shown).resolves.toBeUndefined();
     });
 });
 

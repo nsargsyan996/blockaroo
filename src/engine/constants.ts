@@ -14,7 +14,14 @@ export const PERFECT_CLEAR_BONUS = 500;
 export const MAX_REVIVES = 1;
 export const REVIVE_ROWS_CLEARED = 3;
 
-/** Score at which the dealer reaches its hardest mix. Kept high so young players get a long, gentle ramp. */
-export const DIFFICULTY_MAX_SCORE = 8000;
+/** Score at which the classic dealer reaches its hardest mix. */
+export const DIFFICULTY_MAX_SCORE = 5000;
 
-export const GAME_STATE_VERSION = 1;
+/** Bumped whenever the saved game shape changes; older saves are discarded on load. */
+export const GAME_STATE_VERSION = 2;
+
+/** Gem kinds in adventure levels. */
+export const GEM_TYPES = 3;
+/** Block color used for the block that holds each gem type (index 0 unused). */
+export const GEM_BLOCK_COLORS = [0, 1, 6, 3];
+export const LEVEL_COUNT = 60;

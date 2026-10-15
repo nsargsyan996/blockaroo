@@ -2,7 +2,7 @@ import { memo, useEffect } from "react";
 import { View } from "react-native";
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withDelay, withTiming } from "react-native-reanimated";
 
-import { Block } from "@component";
+import { Block, GemIcon } from "@component";
 import { BOARD_SIZE } from "@engine";
 import { TClearedBlock } from "@store";
 
@@ -32,6 +32,11 @@ const BurstBlock = memo(function BurstBlock({ block, size, pitch, padding, delay
             style={[{ position: "absolute", left: padding + col * pitch, top: padding + row * pitch }, style]}
         >
             <Block color={block.color} size={size} />
+            {block.gem ? (
+                <View style={{ position: "absolute", inset: 0, alignItems: "center", justifyContent: "center" }}>
+                    <GemIcon gem={block.gem} size={size * 0.62} />
+                </View>
+            ) : null}
         </Animated.View>
     );
 });

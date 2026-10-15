@@ -7,17 +7,19 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                sky: { DEFAULT: "#6FD3FF", deep: "#3BA9F5", night: "#2B7FD9" },
-                board: { DEFAULT: "#2A4597", cell: "#3A5BB8" },
-                ink: { DEFAULT: "#1F2A5A", soft: "#4A5790" },
-                cream: "#FFF6DC",
-                sun: { DEFAULT: "#FFC93C", shade: "#E8A417" },
-                leaf: { DEFAULT: "#4CD97B", shade: "#2FB25C" },
+                night: { DEFAULT: "#140F38", mid: "#22195A", deep: "#0D0A28" },
+                card: "#221A5A",
+                soft: "#B6B0E0",
+                ink: "#140F38",
+                sun: { DEFAULT: "#FFC83D", shade: "#D9991A" },
+                leaf: { DEFAULT: "#3ED68A", shade: "#21A765" },
                 berry: "#FF5C8A",
+                amethyst: { DEFAULT: "#8F6BFF", shade: "#6343D6" },
             },
             fontFamily: {
-                display: ["Baloo2_800ExtraBold"],
-                body: ["Baloo2_600SemiBold"],
+                display: ["Rubik_800ExtraBold"],
+                body: ["Rubik_600SemiBold"],
+                medium: ["Rubik_500Medium"],
             },
             borderRadius: {
                 "4xl": "2rem",

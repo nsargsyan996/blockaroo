@@ -10,7 +10,7 @@ export interface IconButtonProps extends Omit<PressableProps, "children"> {
     className?: string;
 }
 
-/** Round white button for the corner controls (home, sound, vibration). 56pt touch target. */
+/** Round glass button for the corner controls (home, sound, vibration). 48pt plus hit slop. */
 export const IconButton = memo(function IconButton({ label, children, className, onPress, ...rest }: IconButtonProps) {
     return (
         <Pressable
@@ -22,7 +22,7 @@ export const IconButton = memo(function IconButton({ label, children, className,
                 onPress?.(event);
             }}
             className={cn(
-                "h-14 w-14 items-center justify-center rounded-full border-[3px] border-ink bg-white active:scale-95",
+                "h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/10 active:scale-95",
                 className
             )}
             {...rest}

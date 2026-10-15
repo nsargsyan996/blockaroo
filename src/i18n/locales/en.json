@@ -1,39 +1,73 @@
 {
     "home": {
-        "play": "Play",
-        "continue": "Keep going",
-        "newGame": "New game",
+        "classic": "Classic",
+        "adventure": "Adventure",
+        "continue": "Continue",
+        "newGame": "New Classic game",
         "best": "Best",
-        "tagline": "Hop the blocks, clear the lines!"
+        "tagline": "Place blocks. Clear lines. Beat your best.",
+        "classicHint": "Endless. Chase a high score.",
+        "adventureHint": "Level {{level}} · collect gems",
+        "play": "Play",
+        "levelShort": "Level {{level}}"
+    },
+    "levels": {
+        "title": "Adventure",
+        "stars": "{{count}} / {{total}} stars",
+        "level": "Level {{level}}",
+        "locked": "Locked"
     },
     "game": {
         "score": "Score",
         "best": "Best",
         "home": "Home",
+        "levels": "Levels",
+        "level": "Level {{level}}",
+        "goals": "Goals",
         "combo": "Combo x{{count}}",
         "praise": {
-            "nice": "Nice!",
+            "good": "Good!",
             "great": "Great!",
-            "super": "Super!",
+            "excellent": "Excellent!",
             "amazing": "Amazing!",
-            "rootastic": "Roo-tastic!",
-            "perfect": "All clear!"
+            "unbelievable": "Unbelievable!",
+            "perfect": "Perfect clear!"
         }
     },
     "gameOver": {
-        "title": "No more room!",
+        "title": "Out of space",
         "newBest": "New best score!",
         "score": "Score",
         "best": "Best",
-        "revive": "Watch a video to keep going",
-        "reviveHint": "Roo hops away 3 rows for you",
+        "revive": "Keep playing",
+        "reviveHint": "Watch a short video: clears 3 rows and deals easier pieces",
         "playAgain": "Play again",
-        "home": "Home"
+        "retry": "Try again",
+        "home": "Home",
+        "levels": "Levels",
+        "goalsLeft": "Goals left"
+    },
+    "won": {
+        "title": "Level complete!",
+        "moves_one": "{{count}} move",
+        "moves_other": "{{count}} moves",
+        "par": "3 stars at {{par}} moves or fewer",
+        "next": "Next level",
+        "replay": "Replay",
+        "levels": "Levels",
+        "allDone": "You finished every level!"
     },
     "settings": {
         "sound": "Sound",
         "vibration": "Vibration",
         "on": "On",
         "off": "Off"
+    },
+    "ads": {
+        "label": "Ad",
+        "test": "Test ad",
+        "testBody": "Real ads appear in iOS and Android builds.",
+        "close": "Close",
+        "reward": "Finish video"
     }
 }

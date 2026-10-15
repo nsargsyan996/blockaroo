@@ -29,11 +29,43 @@ export interface TPiece {
 /** Always TRAY_SIZE slots; a slot is null once its piece has been placed. */
 export type TTray = (TPiece | null)[];
 
-export type TGameStatus = "playing" | "over";
+export type TGameStatus = "playing" | "over" | "won";
+
+export type TGameMode = "classic" | "adventure";
+
+/** 0 = no gem; 1..GEM_TYPES = a gem inside the block on that cell. Gems are collected when their line clears. */
+export type TGem = number;
+
+export type TLevelGoal = { kind: "gems"; gem: number; count: number } | { kind: "score"; target: number };
+
+export interface TLevel {
+    id: number;
+    board: TBoard;
+    gems: TGem[];
+    goals: TLevelGoal[];
+    /** Moves for three stars. */
+    par: number;
+    /** 0..1, feeds the dealer instead of the score. */
+    difficulty: number;
+}
+
+export interface TAdventureState {
+    levelId: number;
+    goals: TLevelGoal[];
+    /** Gems collected so far, indexed by gem type (index 0 unused). */
+    collected: number[];
+    par: number;
+    difficulty: number;
+}
 
 export interface TGameState {
     version: number;
+    mode: TGameMode;
     board: TBoard;
+    /** Parallel to `board`. Always all zeros in classic mode. */
+    gems: TGem[];
+    /** Present in adventure mode only. */
+    adventure: TAdventureState | null;
     tray: TTray;
     score: number;
     /** Current streak multiplier. 0 means no streak is running. */
@@ -67,6 +99,9 @@ export interface TMoveEvent {
     perfectClear: boolean;
     dealt: boolean;
     gameOver: boolean;
+    collectedGems: { index: number; gem: TGem }[];
+    /** Adventure: every goal of the level is met. */
+    won: boolean;
 }
 
 export interface TMoveResult {
