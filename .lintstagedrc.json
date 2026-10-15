@@ -1,0 +1,4 @@
+{
+    "**/*.[tj]s?(x)": ["prettier --write --ignore-unknown", "eslint --fix"],
+    "*.{json,md,css,html,yaml,yml}": "prettier --write --ignore-unknown"
+}
