@@ -6,5 +6,6 @@ import WordmarkArt from "@assets/brand/wordmark.svg";
 const RATIO = 230 / 1478;
 
 export const Wordmark = memo(function Wordmark({ width }: { width: number }) {
-    return <WordmarkArt width={width} height={width * RATIO} accessibilityLabel="Blockaroo" />;
+    const safe = Math.max(1, width);
+    return <WordmarkArt width={safe} height={safe * RATIO} accessibilityLabel="Blockaroo" />;
 });

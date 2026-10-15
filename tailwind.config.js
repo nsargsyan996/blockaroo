@@ -4,6 +4,9 @@ const { join } = require("path");
 module.exports = {
     content: [join(__dirname, "src/**/*!(*.test).{ts,tsx}")],
     presets: [require("nativewind/preset")],
+    // The app has a single dark look. "class" (as in cex-mobile) stops NativeWind from following the system
+    // setting on web, which otherwise throws when the color scheme is set in code.
+    darkMode: "class",
     theme: {
         extend: {
             colors: {

@@ -72,7 +72,8 @@ const Layer = ({ children, style }: { children: ReactNode; style?: ViewStyle | V
 );
 
 /** Roo the kangaroo. Each part moves on its own: breathing, blinking, ear twitches, tail swish and squashy hops. */
-export const Mascot = memo(function Mascot({ mood = "happy", size, hop = true, onPress }: MascotProps) {
+export const Mascot = memo(function Mascot({ mood = "happy", size: rawSize, hop = true, onPress }: MascotProps) {
+    const size = Math.max(1, rawSize);
     const reduceMotion = useReducedMotion();
     const height = size * RATIO;
 

@@ -130,7 +130,8 @@ export const HomePage = () => {
     const mascotSize = landscape ? Math.max(90, Math.min(150, height * 0.3)) : compact ? 110 : 150;
     // Landscape brand column = screen minus side padding (40), the actions column and the gap between them (20).
     const brandWidth = width - 40 - actionsWidth - 20;
-    const wordmarkWidth = landscape ? Math.min(brandWidth - 16, 340) : Math.min(width - 48, 360);
+    // Clamped: the web briefly reports a 1px-wide window on load, and an SVG with a negative width throws.
+    const wordmarkWidth = Math.max(120, landscape ? Math.min(brandWidth - 16, 340) : Math.min(width - 48, 360));
     const playClassic = () => {
         if (canContinue) resumeClassic();
         else startClassic();

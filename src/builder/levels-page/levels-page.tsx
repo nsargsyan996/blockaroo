@@ -87,7 +87,7 @@ export const LevelsPage = () => {
 
     const contentWidth = Math.min(width, 520) - 40;
     const gap = 12;
-    const size = Math.floor((contentWidth - gap * (COLUMNS - 1)) / COLUMNS);
+    const size = Math.max(48, Math.floor((contentWidth - gap * (COLUMNS - 1)) / COLUMNS));
     const ids = useMemo(() => Array.from({ length: LEVEL_COUNT }, (_, index) => index + 1), []);
 
     const play = (id: number) => {
