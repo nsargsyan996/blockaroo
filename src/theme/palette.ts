@@ -1,26 +1,24 @@
-// Blockaroo brand palette: a calm night sky with jewel-bright blocks. Tailwind (tailwind.config.js) mirrors the UI
-// tokens, and runtime styles (gradients, SVG fills, blocks) read them from here.
+// Blockaroo brand palette: a royal blue arcade stage with glossy jewel blocks. Tailwind (tailwind.config.js) mirrors
+// the UI tokens, and runtime styles (gradients, SVG fills, blocks) read them from here.
 
 export const palette = {
-    night: "#140F38",
-    nightMid: "#22195A",
-    nightDeep: "#0D0A28",
-    board: "#0F0B2E",
-    boardCell: "#1D1750",
-    boardCellEdge: "#29226A",
+    /** The stage behind every screen: royal blue, a faint tile grid and a bright spot. */
+    arcade: { top: "#2B5BE0", mid: "#1438B8", deep: "#0A1F7A", grid: "rgba(140, 180, 255, 0.14)", spot: "#7FC4FF" },
+    board: "#0B1F6E",
+    boardFrame: "#4C7DFF",
+    boardCell: "#10287F",
+    boardCellEdge: "#1B3DAA",
     glass: "rgba(255,255,255,0.08)",
     glassBorder: "rgba(255,255,255,0.14)",
     text: "#FFFFFF",
-    textSoft: "#B6B0E0",
+    textSoft: "#B9CBFF",
     ink: "#140F38",
     sun: "#FFC83D",
     sunShade: "#D9991A",
     leaf: "#3ED68A",
     leafShade: "#21A765",
     berry: "#FF5C8A",
-    card: "#221A5A",
-    /** The home screen's arcade stage: royal blue, a faint tile grid and a bright spot behind the title. */
-    arcade: { top: "#2B5BE0", mid: "#1438B8", deep: "#0A1F7A", grid: "rgba(140, 180, 255, 0.14)", spot: "#7FC4FF" },
+    card: "#102A8F",
 } as const;
 
 export interface TBlockColor {

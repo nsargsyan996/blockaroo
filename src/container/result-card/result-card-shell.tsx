@@ -21,7 +21,7 @@ export const ResultCardShell = memo(function ResultCardShell({
 
     return (
         <Animated.View entering={FadeIn.duration(200)} style={StyleSheet.absoluteFill} accessibilityViewIsModal>
-            <View className="flex-1 bg-night-deep/80">
+            <View className="flex-1 bg-ink/80">
                 <ScrollView
                     contentContainerStyle={{
                         flexGrow: 1,

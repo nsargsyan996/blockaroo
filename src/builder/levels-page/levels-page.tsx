@@ -11,6 +11,8 @@ import { cn } from "@util";
 import { useRouter } from "expo-router";
 
 const COLUMNS = 4;
+/** How far a tile sits above its shaded edge. */
+const TILE_DEPTH = 5;
 
 interface LevelTileProps {
     id: number;
@@ -37,20 +39,24 @@ const LevelTile = memo(function LevelTile({ id, size, stars, locked, current, on
                 onPress(id);
             }}
             className="active:scale-95"
-            style={{ width: size }}
+            style={{ width: size, paddingBottom: TILE_DEPTH }}
         >
+            {/* Unlocked tiles are solid blocks on a shaded edge: the next level is a sun block, the rest are white. */}
+            {locked ? null : (
+                <View
+                    className={cn("absolute inset-x-0 bottom-0 rounded-2xl", current ? "bg-sun-shade" : "bg-ink/40")}
+                    style={{ top: TILE_DEPTH }}
+                />
+            )}
             <View
                 className={cn(
-                    "items-center justify-center gap-1 rounded-2xl border",
-                    locked
-                        ? "border-white/5 bg-white/5"
-                        : current
-                          ? "border-sun bg-sun/15"
-                          : "border-white/15 bg-white/10"
+                    "items-center justify-center gap-1 overflow-hidden rounded-2xl",
+                    locked ? "border border-white/10 bg-white/5" : current ? "bg-sun" : "bg-white"
                 )}
-                style={{ height: size }}
+                style={{ height: size - TILE_DEPTH }}
             >
-                <Typography variant="title" tone={locked ? "soft" : "white"} className={cn(locked && "opacity-40")}>
+                {current ? <View pointerEvents="none" className="absolute inset-x-0 top-0 h-1/2 bg-white/25" /> : null}
+                <Typography variant="title" tone={locked ? "soft" : "ink"} className={cn(locked && "opacity-40")}>
                     {id}
                 </Typography>
                 {locked ? (
@@ -60,13 +66,13 @@ const LevelTile = memo(function LevelTile({ id, size, stars, locked, current, on
                 ) : (
                     <View className="flex-row gap-0.5">
                         {[0, 1, 2].map((index) => (
-                            <StarIcon key={index} size={14} filled={index < stars} />
+                            <StarIcon key={index} size={14} filled={index < stars} onLight />
                         ))}
                     </View>
                 )}
                 {!locked && scoreLevel ? (
-                    <View className="absolute right-1.5 top-1.5 rounded-full bg-sun px-1.5">
-                        <Typography variant="caption" tone="ink" className="text-[9px]">
+                    <View className="absolute right-1.5 top-1.5 rounded-full bg-ink px-1.5">
+                        <Typography variant="caption" tone="sun" className="text-[9px]">
                             ★
                         </Typography>
                     </View>

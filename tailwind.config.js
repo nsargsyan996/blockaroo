@@ -10,9 +10,8 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                night: { DEFAULT: "#140F38", mid: "#22195A", deep: "#0D0A28" },
-                card: "#221A5A",
-                soft: "#B6B0E0",
+                card: "#102A8F",
+                soft: "#B9CBFF",
                 ink: "#140F38",
                 sun: { DEFAULT: "#FFC83D", shade: "#D9991A" },
                 leaf: { DEFAULT: "#3ED68A", shade: "#21A765" },

@@ -241,7 +241,7 @@ export const HomePage = () => {
     );
 
     return (
-        <AppBackground variant="arcade">
+        <AppBackground pieces>
             <View
                 className="flex-1 items-center"
                 style={{ paddingTop: insets.top + 12, paddingBottom: insets.bottom + 12, paddingHorizontal: 20 }}

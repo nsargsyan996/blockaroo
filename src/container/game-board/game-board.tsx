@@ -43,7 +43,7 @@ export interface GameBoardProps {
 }
 
 const EMPTY = new Set<number>();
-const BORDER = 2;
+const BORDER = 3;
 
 export const GameBoard = memo(
     forwardRef<View, GameBoardProps>(function GameBoard(
@@ -98,7 +98,7 @@ export const GameBoard = memo(
                         borderRadius: 22,
                         backgroundColor: palette.board,
                         borderWidth: BORDER,
-                        borderColor: palette.glassBorder,
+                        borderColor: palette.boardFrame,
                         shadowColor: "#000000",
                         shadowOpacity: 0.45,
                         shadowRadius: 24,

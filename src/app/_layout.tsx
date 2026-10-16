@@ -35,7 +35,7 @@ export default function RootLayout() {
                 screenOptions={{
                     headerShown: false,
                     animation: "fade",
-                    contentStyle: { backgroundColor: palette.night },
+                    contentStyle: { backgroundColor: palette.arcade.mid },
                     gestureEnabled: false,
                 }}
             />

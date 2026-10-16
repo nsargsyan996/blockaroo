@@ -49,7 +49,7 @@ export const PraiseBanner = memo(function PraiseBanner({ move }: { move: TLastMo
                     variant="hero"
                     align="center"
                     style={{
-                        textShadowColor: "rgba(143,107,255,0.9)",
+                        textShadowColor: "rgba(10,28,94,0.9)",
                         textShadowRadius: 18,
                         textShadowOffset: { width: 0, height: 2 },
                     }}
