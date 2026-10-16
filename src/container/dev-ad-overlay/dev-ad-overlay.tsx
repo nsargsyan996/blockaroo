@@ -18,6 +18,7 @@ export const DevAdOverlay = () => {
 
     useEffect(() => {
         if (!kind) return;
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- restarts the countdown when a new ad opens
         setLeft(kind === "rewarded" ? REWARD_SECONDS : 1);
         const timer = setInterval(() => setLeft((value) => Math.max(0, value - 1)), 1000);
         return () => clearInterval(timer);

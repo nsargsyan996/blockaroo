@@ -81,6 +81,7 @@ export const PlayPage = () => {
     // A game that ended while the app was closed opens straight on its result card.
     useEffect(() => {
         if (lastMove || !game) return;
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- one-off sync from the persisted store on hydration
         if (game.status === "over") setResult("over");
         else if (game.status === "won") setResult("won");
     }, [game, lastMove]);

@@ -1,6 +1,7 @@
 import { Platform } from "react-native";
 
 import { AD_REQUEST_OPTIONS, IS_PRODUCTION_BUILD, PRODUCTION_AD_UNITS } from "@config";
+import Constants, { ExecutionEnvironment } from "expo-constants";
 
 import { TAdsService } from "./ads.type";
 import { shouldShowInterstitial } from "./interstitial-policy";
@@ -11,6 +12,8 @@ type TInterstitialAd = ReturnType<TMobileAdsModule["InterstitialAd"]["createForA
 
 // Expo Go does not include the ads SDK. Loading it lazily keeps the game playable there, just without ads.
 export const loadAdsModule = (): TMobileAdsModule | null => {
+    // Skip the require outright in Expo Go: Metro reports a module that throws while loading even when it is caught.
+    if (Constants.executionEnvironment === ExecutionEnvironment.StoreClient) return null;
     try {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- lazy on purpose, see above
         return require("react-native-google-mobile-ads") as TMobileAdsModule;
