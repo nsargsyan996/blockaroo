@@ -12,7 +12,7 @@ import {
     revive,
     starsFor,
 } from "../game";
-import { buildLevel, difficultyForLevel, fillRatioFor, gemTypesFor, getLevel } from "../levels";
+import { buildLevel, difficultyForLevel, fillRatioFor, gemCountFor, gemTypesFor, getLevel } from "../levels";
 
 const EMPTY_ROW = "........";
 
@@ -165,5 +165,17 @@ describe("levels", () => {
         expect(difficultyForLevel(1)).toBe(0);
         expect(difficultyForLevel(60)).toBeCloseTo(0.85);
         expect(getLevel(5).goals[0].kind).toBe("score");
+    });
+
+    it("keeps creeping up past level 60 without ever easing off", () => {
+        expect(fillRatioFor(100)).toBeCloseTo(0.4);
+        expect(gemCountFor(100)).toBe(16);
+        expect(difficultyForLevel(100)).toBeCloseTo(1);
+        for (let id = 2; id <= LEVEL_COUNT; id++) {
+            expect(fillRatioFor(id)).toBeGreaterThanOrEqual(fillRatioFor(id - 1));
+            expect(gemCountFor(id)).toBeGreaterThanOrEqual(gemCountFor(id - 1));
+            expect(difficultyForLevel(id)).toBeGreaterThanOrEqual(difficultyForLevel(id - 1));
+            expect(difficultyForLevel(id)).toBeLessThanOrEqual(1);
+        }
     });
 });

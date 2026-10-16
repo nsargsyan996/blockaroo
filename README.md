@@ -4,7 +4,7 @@ A block puzzle game for all ages (and safe for kids), starring Roo the kangaroo.
 a whole row or column and it clears. Clear lines back to back to build a streak.
 
 - **Classic**: endless. The game ends when none of your three pieces fit. Chase your best score.
-- **Adventure**: 60 levels. Most hide gems (diamonds, stars, hearts) inside the starting blocks; clear their lines to
+- **Adventure**: 100 levels. Most hide gems (diamonds, stars, hearts) inside the starting blocks; clear their lines to
   collect them. Every fifth level is a score challenge. Finish under par for 3 stars; each win unlocks the next level.
 
 ## Run it

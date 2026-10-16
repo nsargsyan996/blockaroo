@@ -24,4 +24,4 @@ export const GAME_STATE_VERSION = 2;
 export const GEM_TYPES = 3;
 /** Block color used for the block that holds each gem type (index 0 unused). */
 export const GEM_BLOCK_COLORS = [0, 1, 6, 3];
-export const LEVEL_COUNT = 60;
+export const LEVEL_COUNT = 100;
