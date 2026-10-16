@@ -32,7 +32,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     orientation: "portrait",
     icon: "./assets/images/icon.png",
     userInterfaceStyle: "dark",
-    backgroundColor: "#140F38",
+    backgroundColor: "#1438B8",
     ios: {
         bundleIdentifier: BUNDLE_ID[APP_VARIANT],
         supportsTablet: true,
@@ -44,7 +44,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         package: BUNDLE_ID[APP_VARIANT],
         adaptiveIcon: {
             foregroundImage: "./assets/images/adaptive-icon.png",
-            backgroundColor: "#140F38",
+            backgroundColor: "#1438B8",
         },
         // A kids' game has no reason to ask for the advertising ID; the ads SDK still works without it.
         blockedPermissions: ["com.google.android.gms.permission.AD_ID"],
@@ -65,9 +65,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
             "expo-splash-screen",
             {
                 image: "./assets/images/splash-icon.png",
-                imageWidth: 220,
+                imageWidth: 300,
                 resizeMode: "contain",
-                backgroundColor: "#140F38",
+                backgroundColor: "#1438B8",
             },
         ],
         [

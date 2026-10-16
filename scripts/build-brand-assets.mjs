@@ -16,5 +16,5 @@ const render = (svg, width, out) => {
 
 render(brand("icon.svg"), 1024, "icon.png");
 render(brand("adaptive-icon.svg"), 1024, "adaptive-icon.png");
-render(brand("roo-happy.svg"), 1024, "splash-icon.png");
+render(brand("splash.svg"), 1200, "splash-icon.png");
 render(brand("icon.svg"), 196, "favicon.png");

@@ -2,9 +2,9 @@
 Draws Roo, Blockaroo's kangaroo mascot, as layered SVG parts.
 
 Every part shares one 240x260 canvas so the parts stack exactly; the app animates each layer separately (ears,
-tail, arms, eyes...). Composed single-file versions (roo-happy / roo-oops / roo-cheer) feed the app icon and splash.
+tail, arms, eyes...). Composed single-file versions (roo-happy / roo-oops / roo-cheer) are kept for reference.
 
-It also writes the app icon and Android adaptive icon (icon.svg, adaptive-icon.svg).
+The app icon, adaptive icon and splash come from scripts/brand/arcade-brand.mjs, not from here.
 
 Run: pnpm brand:roo   (then `pnpm brand:build` for the PNGs)
 """
@@ -114,42 +114,3 @@ def compose(mood, shadow=True):
 for mood in ORDER:
     with open(os.path.join(OUT, f"roo-{mood}.svg"), "w") as f:
         f.write(svg(compose(mood)))
-
-# App icon: night tile with a violet glow, three jewel blocks and Roo.
-JEWELS = [("#38C7F0", "#8BE1F8", "#1A93BD"), ("#3ED68A", "#86EDB8", "#1FA463"), ("#8F6BFF", "#BBA5FF", "#6343D6")]
-
-
-def jewel(x, y, size, color, rot):
-    base, light, shade = color
-    r = size * 0.22
-    return (f'<g transform="rotate({rot} {x + size / 2} {y + size / 2})">'
-            f'<rect x="{x}" y="{y}" width="{size}" height="{size}" rx="{r}" fill="{shade}" stroke="#000000" stroke-opacity="0.3" stroke-width="3"/>'
-            f'<rect x="{x + size * 0.06}" y="{y + size * 0.05}" width="{size * 0.88}" height="{size * 0.81}" rx="{r * 0.75}" fill="{base}"/>'
-            f'<rect x="{x + size * 0.06}" y="{y + size * 0.05}" width="{size * 0.88}" height="{size * 0.36}" rx="{r * 0.75}" fill="{light}" opacity="0.45"/>'
-            f'<rect x="{x + size * 0.16}" y="{y + size * 0.12}" width="{size * 0.18}" height="{size * 0.12}" rx="{size * 0.06}" fill="#FFFFFF" opacity="0.7"/></g>')
-
-
-TRAY = jewel(0, 0, 230, JEWELS[0], -6) + jewel(250, 20, 230, JEWELS[1], 3) + jewel(500, 0, 230, JEWELS[2], 7)
-ROO = f'<g transform="translate(212 40) scale(2.5)">{compose("happy", shadow=False)}</g>'
-ICON_DEFS = """<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A1F6B"/><stop offset="1" stop-color="#110C30"/></linearGradient>
-<radialGradient id="glow" cx="0.5" cy="0.42" r="0.5"><stop offset="0" stop-color="#8F6BFF" stop-opacity="0.55"/><stop offset="1" stop-color="#8F6BFF" stop-opacity="0"/></radialGradient>"""
-icon = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
-{DEFS.replace("<defs>", "<defs>" + ICON_DEFS)}
-<rect width="1024" height="1024" fill="url(#sky)"/><circle cx="512" cy="430" r="470" fill="url(#glow)"/>
-<circle cx="150" cy="160" r="6" fill="#FFFFFF" opacity="0.7"/><circle cx="880" cy="230" r="5" fill="#FFFFFF" opacity="0.6"/>
-<circle cx="760" cy="110" r="4" fill="#FFFFFF" opacity="0.5"/><circle cx="260" cy="330" r="3.5" fill="#FFFFFF" opacity="0.5"/>
-<g transform="translate(140 742)">{TRAY}</g>{ROO}
-</svg>
-'''
-adaptive = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
-{DEFS}
-<g transform="translate(512 512) scale(0.62) translate(-512 -512)"><g transform="translate(140 742)">{TRAY}</g>{ROO}</g>
-</svg>
-'''
-with open(os.path.join(OUT, "icon.svg"), "w") as f:
-    f.write(icon)
-with open(os.path.join(OUT, "adaptive-icon.svg"), "w") as f:
-    f.write(adaptive)
-
-if __name__ == "__main__":
-    print("wrote", len(PARTS_SVG), "parts and", len(ORDER), "poses to", os.path.normpath(OUT))
