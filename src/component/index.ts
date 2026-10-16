@@ -10,3 +10,4 @@ export * from "./piece";
 export * from "./star-icon";
 export * from "./typography";
 export * from "./wordmark";
+export * from "./entrance";

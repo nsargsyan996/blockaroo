@@ -11,61 +11,53 @@ export interface BlockProps {
 }
 
 /**
- * One jewel block: a darker rim, the colored face, a soft top sheen and a small highlight. Plain Views keep 64+ of
- * them cheap to render.
+ * One beveled jewel block, like a glossy plastic tile: a lit top-left bevel, a shaded bottom-right bevel, the flat
+ * colored face between them and a small glint. Plain Views keep 64+ of them cheap to render.
  */
 export const Block = memo(function Block({ color, size, style }: BlockProps) {
     const tone = BLOCK_COLORS[color] ?? BLOCK_COLORS[1];
-    const radius = size * 0.22;
+    const radius = size * 0.14;
+    const bevel = size * 0.16;
     return (
         <View
             style={[
-                {
-                    width: size,
-                    height: size,
-                    borderRadius: radius,
-                    backgroundColor: tone.shade,
-                    borderWidth: 1,
-                    borderColor: "rgba(0,0,0,0.28)",
-                    overflow: "hidden",
-                },
+                { width: size, height: size, borderRadius: radius, backgroundColor: tone.light, overflow: "hidden" },
                 style,
             ]}
         >
+            {/* Bottom-right bevel, drawn over the lit base so the top-right and bottom-left corners split cleanly. */}
             <View
                 style={{
                     position: "absolute",
-                    left: size * 0.06,
-                    right: size * 0.06,
-                    top: size * 0.05,
-                    bottom: size * 0.14,
-                    borderRadius: radius * 0.75,
+                    left: bevel,
+                    top: bevel,
+                    right: 0,
+                    bottom: 0,
+                    borderBottomRightRadius: radius,
+                    backgroundColor: tone.shade,
+                }}
+            />
+            <View
+                style={{
+                    position: "absolute",
+                    left: bevel,
+                    top: bevel,
+                    right: bevel,
+                    bottom: bevel,
+                    borderRadius: radius * 0.4,
                     backgroundColor: tone.base,
                 }}
             />
             <View
                 style={{
                     position: "absolute",
-                    left: size * 0.06,
-                    right: size * 0.06,
-                    top: size * 0.05,
-                    height: size * 0.36,
-                    borderTopLeftRadius: radius * 0.75,
-                    borderTopRightRadius: radius * 0.75,
-                    backgroundColor: tone.light,
-                    opacity: 0.45,
-                }}
-            />
-            <View
-                style={{
-                    position: "absolute",
-                    left: size * 0.16,
-                    top: size * 0.12,
-                    width: size * 0.18,
-                    height: size * 0.12,
+                    left: bevel * 1.35,
+                    top: bevel * 1.35,
+                    width: size * 0.16,
+                    height: size * 0.1,
                     borderRadius: size,
                     backgroundColor: "#FFFFFF",
-                    opacity: 0.7,
+                    opacity: 0.8,
                 }}
             />
         </View>

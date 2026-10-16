@@ -19,6 +19,8 @@ export const palette = {
     leafShade: "#21A765",
     berry: "#FF5C8A",
     card: "#221A5A",
+    /** The home screen's arcade stage: royal blue, a faint tile grid and a bright spot behind the title. */
+    arcade: { top: "#2B5BE0", mid: "#1438B8", deep: "#0A1F7A", grid: "rgba(140, 180, 255, 0.14)", spot: "#7FC4FF" },
 } as const;
 
 export interface TBlockColor {

@@ -1,4 +1,4 @@
-import { memo, ReactNode, useCallback, useEffect } from "react";
+import { memo, ReactNode, useCallback, useEffect, useRef } from "react";
 import { Pressable, StyleProp, View, ViewStyle } from "react-native";
 import Animated, {
     AnimatedStyle,
@@ -42,10 +42,18 @@ export interface MascotProps {
     hop?: boolean;
     /** Tapping Roo makes him jump. */
     onPress?: () => void;
+    /** Drops in from above and lands with a squash the first time he shows. */
+    entrance?: boolean;
 }
 
 /** Every part is drawn on the same 240x260 canvas (scripts/brand/roo.py), so layers stack exactly. */
 const RATIO = 260 / 240;
+
+/** Entrance: a short beat, then a fall that ends in a crouch, a stretch and a settle. */
+const FALL_DELAY_MS = 80;
+const FALL_MS = 420;
+/** When Roo touches down. The home screen times its own entrance to this beat. */
+export const MASCOT_LANDING_MS = FALL_DELAY_MS + FALL_MS;
 
 /** Pivot points on that canvas, as percentages, for rotating and squashing each layer. */
 // Array form on purpose: React Native's "x% y%" string parser only understands whole-number percentages.
@@ -76,10 +84,17 @@ const Layer = ({ children, style }: { children: ReactNode; style?: StyleProp<Ani
 );
 
 /** Roo the kangaroo. Each part moves on its own: breathing, blinking, ear twitches, tail swish and squashy hops. */
-export const Mascot = memo(function Mascot({ mood = "happy", size: rawSize, hop = true, onPress }: MascotProps) {
+export const Mascot = memo(function Mascot({
+    mood = "happy",
+    size: rawSize,
+    hop = true,
+    onPress,
+    entrance = false,
+}: MascotProps) {
     const size = Math.max(1, rawSize);
     const reduceMotion = useReducedMotion();
     const height = size * RATIO;
+    const entered = useRef(false);
 
     const breathe = useSharedValue(0);
     const tail = useSharedValue(0);
@@ -90,6 +105,7 @@ export const Mascot = memo(function Mascot({ mood = "happy", size: rawSize, hop 
     const lift = useSharedValue(0);
     const squash = useSharedValue(0);
     const shake = useSharedValue(0);
+    const entry = useSharedValue(entrance && !reduceMotion ? 0 : 1);
 
     const jump = useCallback(
         (power = 1) => {
@@ -118,8 +134,23 @@ export const Mascot = memo(function Mascot({ mood = "happy", size: rawSize, hop 
         const values = [breathe, tail, earLeft, earRight, blink, arms, lift, squash, shake];
         if (reduceMotion) {
             values.forEach((value) => cancelAnimation(value));
+            entry.set(1);
             return;
         }
+
+        const landing = entrance && !entered.current;
+        entered.current = true;
+        if (landing) {
+            entry.set(withTiming(1, { duration: 160 }));
+            lift.set(-size * 0.6);
+        }
+        // Gravity is the one place ease-in belongs: a falling body speeds up.
+        const fall = withDelay(FALL_DELAY_MS, withTiming(0, { duration: FALL_MS, easing: Easing.in(Easing.quad) }));
+        const touchdown = withSequence(
+            withDelay(MASCOT_LANDING_MS, withTiming(1, { duration: 90 })),
+            withTiming(-0.5, { duration: 170 }),
+            withTiming(0, { duration: 220, easing: Easing.out(Easing.back(2)) })
+        );
 
         loop(breathe, 0, 1, 1300);
         loop(tail, -1, 1, mood === "oops" ? 1500 : 850);
@@ -163,35 +194,53 @@ export const Mascot = memo(function Mascot({ mood = "happy", size: rawSize, hop 
         if (hops) {
             const gap = mood === "cheer" ? 250 : 1700;
             const up = -size * (mood === "cheer" ? 0.1 : 0.13);
-            squash.set(
-                withRepeat(
-                    withSequence(
-                        withDelay(gap, withTiming(1, { duration: 110 })),
-                        withTiming(-0.8, { duration: 200 }),
-                        withTiming(0, { duration: 260 }),
-                        withTiming(0.8, { duration: 90 }),
-                        withTiming(0, { duration: 170 })
-                    ),
-                    -1
-                )
+            const hopSquash = withRepeat(
+                withSequence(
+                    withDelay(gap, withTiming(1, { duration: 110 })),
+                    withTiming(-0.8, { duration: 200 }),
+                    withTiming(0, { duration: 260 }),
+                    withTiming(0.8, { duration: 90 }),
+                    withTiming(0, { duration: 170 })
+                ),
+                -1
             );
-            lift.set(
-                withRepeat(
-                    withSequence(
-                        withDelay(gap + 110, withTiming(up, { duration: 230, easing: Easing.out(Easing.quad) })),
-                        withTiming(0, { duration: 230, easing: Easing.in(Easing.quad) }),
-                        withTiming(0, { duration: 260 })
-                    ),
-                    -1
-                )
+            const hopLift = withRepeat(
+                withSequence(
+                    withDelay(gap + 110, withTiming(up, { duration: 230, easing: Easing.out(Easing.quad) })),
+                    withTiming(0, { duration: 230, easing: Easing.in(Easing.quad) }),
+                    withTiming(0, { duration: 260 })
+                ),
+                -1
             );
+            squash.set(landing ? withSequence(touchdown, hopSquash) : hopSquash);
+            lift.set(landing ? withSequence(fall, hopLift) : hopLift);
+        } else if (landing) {
+            squash.set(touchdown);
+            lift.set(fall);
         }
 
         return () => values.forEach((value) => cancelAnimation(value));
-    }, [mood, hop, size, reduceMotion, breathe, tail, earLeft, earRight, blink, arms, lift, squash, shake]);
+    }, [
+        mood,
+        hop,
+        size,
+        reduceMotion,
+        entrance,
+        entry,
+        breathe,
+        tail,
+        earLeft,
+        earRight,
+        blink,
+        arms,
+        lift,
+        squash,
+        shake,
+    ]);
 
     // squash: 1 = crouched before a jump or on landing, -1 = stretched in the air.
     const characterStyle = useAnimatedStyle(() => ({
+        opacity: entry.value,
         transform: [
             { translateX: shake.value * size * 0.03 },
             { translateY: lift.value },
@@ -201,7 +250,10 @@ export const Mascot = memo(function Mascot({ mood = "happy", size: rawSize, hop 
     }));
     const shadowStyle = useAnimatedStyle(() => {
         const air = interpolate(lift.value, [-size * 0.15, 0], [1, 0], "clamp");
-        return { opacity: 1 - air * 0.5, transform: [{ scaleX: 1 - air * 0.35 + squash.value * 0.05 }] };
+        return {
+            opacity: (1 - air * 0.5) * entry.value,
+            transform: [{ scaleX: 1 - air * 0.35 + squash.value * 0.05 }],
+        };
     });
     const bodyStyle = useAnimatedStyle(() => ({ transform: [{ scaleY: 1 + breathe.value * 0.02 }] }));
     const headStyle = useAnimatedStyle(() => ({ transform: [{ translateY: breathe.value * size * 0.008 }] }));
