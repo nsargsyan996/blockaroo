@@ -3,8 +3,8 @@ import Constants from "expo-constants";
 /**
  * Ads follow Google Play Families and COPPA rules, since the game is made with kids in mind: every request is tagged
  * child-directed and under the age of consent, limited to G-rated content and non-personalized. Rewarded video is
- * opt-in only (the player taps "Watch a video"), banners sit outside the board, and full-screen ads only appear
- * between games. A new install gets a quiet first week with no banners or interstitials; rewarded video stays
+ * opt-in only (the player taps "Watch a video"), banners only appear on the home screen, and full-screen ads only
+ * appear between games. A new install gets a quiet first week with no banners or interstitials; rewarded video stays
  * available because the player asks for it.
  */
 export interface TAdPacing {

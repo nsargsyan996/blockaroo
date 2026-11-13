@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { AdBanner, AppBackground } from "@component";
+import { AppBackground } from "@component";
 import { GAME_CONFIG } from "@config";
 import {
     DragLayer,
@@ -272,13 +272,13 @@ export const PlayPage = () => {
             >
                 {game ? (
                     layout.landscape ? (
-                        // Landscape: board on the left, score, goals, pieces and banner in a column beside it.
+                        // Landscape: board on the left, score, goals and pieces in a column beside it. No banner during
+                        // play: it would sit right under the tray, where a dragging finger could tap it by accident.
                         <View className="flex-1 flex-row items-center justify-center gap-4">
                             {boardView}
                             <View className="h-full justify-between gap-2 py-1" style={{ width: layout.sideWidth }}>
                                 {hud}
                                 <View className="flex-1 items-center justify-center">{tray}</View>
-                                <AdBanner />
                             </View>
                         </View>
                     ) : (
@@ -286,7 +286,6 @@ export const PlayPage = () => {
                             <View style={{ width: layout.boardSize }}>{hud}</View>
                             <View className="flex-1 justify-center">{boardView}</View>
                             {tray}
-                            <AdBanner />
                         </>
                     )
                 ) : null}
