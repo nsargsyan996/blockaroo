@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ComponentRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -61,8 +61,8 @@ export const PlayPage = () => {
     const reviveGame = useGameStore((state) => state.revive);
     const rewardedReady = useRewardedReady();
 
-    const rootRef = useRef<View>(null);
-    const boardRef = useRef<View>(null);
+    const rootRef = useRef<ComponentRef<typeof View>>(null);
+    const boardRef = useRef<ComponentRef<typeof View>>(null);
     const slotRef = useRef(-1);
     const targetRef = useRef<{ row: number; col: number } | null>(null);
     const overBoardRef = useRef(false);

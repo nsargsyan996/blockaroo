@@ -1,4 +1,4 @@
-import { forwardRef, memo, useEffect, useMemo, useState } from "react";
+import { ComponentRef, forwardRef, memo, useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 
@@ -46,7 +46,7 @@ const EMPTY = new Set<number>();
 const BORDER = 3;
 
 export const GameBoard = memo(
-    forwardRef<View, GameBoardProps>(function GameBoard(
+    forwardRef<ComponentRef<typeof View>, GameBoardProps>(function GameBoard(
         { board, gems, layout, preview, landed, burst, onLayout },
         ref
     ) {
