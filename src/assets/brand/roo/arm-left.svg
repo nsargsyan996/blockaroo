@@ -1,13 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 260">
-<defs>
-<linearGradient id="fur" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFC27A"/><stop offset="1" stop-color="#F2893D"/></linearGradient>
-<linearGradient id="furDeep" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F59A4C"/><stop offset="1" stop-color="#D96A28"/></linearGradient>
-<linearGradient id="belly" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFD6A3"/></linearGradient>
-<linearGradient id="pouch" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD9A8"/><stop offset="1" stop-color="#F4B877"/></linearGradient>
-<linearGradient id="earIn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFB3C1"/><stop offset="1" stop-color="#FF8FA6"/></linearGradient>
-<radialGradient id="iris" cx="0.45" cy="0.4" r="0.6"><stop offset="0" stop-color="#5B3FA0"/><stop offset="1" stop-color="#1E1240"/></radialGradient>
-<radialGradient id="blush" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#FF7F9C" stop-opacity="0.75"/><stop offset="1" stop-color="#FF7F9C" stop-opacity="0"/></radialGradient>
-<linearGradient id="gem" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF8C96"/><stop offset="1" stop-color="#E5404F"/></linearGradient>
-</defs>
-<ellipse cx="92" cy="188" rx="11" ry="16" transform="rotate(-28 92 188)" fill="url(#fur)" stroke="#3D1F2B" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="600" viewBox="0 0 520 600"><title>Roo part arm_l</title><defs><radialGradient id="rfur" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#FFC983"/><stop offset=".55" stop-color="#F7A14C"/><stop offset="1" stop-color="#D9772E"/></radialGradient><radialGradient id="rcream" cx=".45" cy=".35" r=".75"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".6" stop-color="#FFF0D6"/><stop offset="1" stop-color="#FFDDB0"/></radialGradient><linearGradient id="bf-topaz" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE388"/><stop offset=".55" stop-color="#FFD23F"/><stop offset="1" stop-color="#E2BC43"/></linearGradient><clipPath id="bclip"><rect x="6" y="6" width="88" height="88" rx="15"/></clipPath></defs><g transform="translate(60,40)"><path d="M150,320 Q128,356 138,392" fill="none" stroke="#0A1C5E" stroke-width="40" stroke-linecap="round"/><path d="M150,320 Q128,356 138,392" fill="none" stroke="#F7A14C" stroke-width="22" stroke-linecap="round"/><circle cx="138" cy="392" r="17" fill="#FFC983" stroke="#0A1C5E" stroke-width="8"/><circle cx="133" cy="386" r="5.44" fill="#fff" opacity=".45"/></g></svg>

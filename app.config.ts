@@ -45,7 +45,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         package: BUNDLE_ID[APP_VARIANT],
         adaptiveIcon: {
             foregroundImage: "./assets/images/adaptive-icon.png",
-            backgroundColor: "#1438B8",
+            // The art kit's adaptive background: a flat stage blue behind the full-body Roo.
+            backgroundColor: "#2B5BE0",
         },
         // A kids' game has no reason to ask for the advertising ID; the ads SDK still works without it.
         blockedPermissions: ["com.google.android.gms.permission.AD_ID"],

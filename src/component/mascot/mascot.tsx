@@ -15,21 +15,25 @@ import Animated, {
     withTiming,
 } from "react-native-reanimated";
 
-import ArmLeftUp from "@assets/brand/roo/arm-left-up.svg";
 import ArmLeft from "@assets/brand/roo/arm-left.svg";
-import ArmRightUp from "@assets/brand/roo/arm-right-up.svg";
 import ArmRight from "@assets/brand/roo/arm-right.svg";
 import Body from "@assets/brand/roo/body.svg";
 import EarLeft from "@assets/brand/roo/ear-left.svg";
 import EarRight from "@assets/brand/roo/ear-right.svg";
-import EyesCheer from "@assets/brand/roo/eyes-cheer.svg";
-import EyesHappy from "@assets/brand/roo/eyes-happy.svg";
-import EyesOops from "@assets/brand/roo/eyes-oops.svg";
-import Feet from "@assets/brand/roo/feet.svg";
+import EyesClosedHappy from "@assets/brand/roo/eyes-closed-happy.svg";
+import EyesOpen from "@assets/brand/roo/eyes-open.svg";
+import EyesWorried from "@assets/brand/roo/eyes-worried.svg";
+import FootLeft from "@assets/brand/roo/foot-left.svg";
+import FootRight from "@assets/brand/roo/foot-right.svg";
+import Sparkles from "@assets/brand/roo/fx-sparkles.svg";
+import Sweat from "@assets/brand/roo/fx-sweat.svg";
 import Head from "@assets/brand/roo/head.svg";
-import MouthCheer from "@assets/brand/roo/mouth-cheer.svg";
-import MouthHappy from "@assets/brand/roo/mouth-happy.svg";
-import MouthOops from "@assets/brand/roo/mouth-oops.svg";
+import MouthLaugh from "@assets/brand/roo/mouth-laugh.svg";
+import MouthSmile from "@assets/brand/roo/mouth-smile.svg";
+import MouthWobble from "@assets/brand/roo/mouth-wobble.svg";
+import Nose from "@assets/brand/roo/nose.svg";
+import PouchBlock from "@assets/brand/roo/pouch-block.svg";
+import PouchFront from "@assets/brand/roo/pouch-front.svg";
 import Shadow from "@assets/brand/roo/shadow.svg";
 import Tail from "@assets/brand/roo/tail.svg";
 
@@ -46,8 +50,14 @@ export interface MascotProps {
     entrance?: boolean;
 }
 
-/** Every part is drawn on the same 240x260 canvas (scripts/brand/roo.py), so layers stack exactly. */
-const RATIO = 260 / 240;
+/**
+ * Every part is drawn on the same 520x600 canvas (store/art-kit/README.md, "Roo rig"), so layers stack exactly. Roo
+ * himself fills a 400x520 box at (60, 40); the margin leaves room for swaying ears, the tail and sparkles. `size` is
+ * Roo's width: the layout box hugs Roo and the margin spills outside it.
+ */
+const CANVAS = { width: 520, height: 600 };
+const ROO = { x: 60, y: 40, width: 400, height: 520 };
+const RATIO = ROO.height / ROO.width;
 
 /** Entrance: a short beat, then a fall that ends in a crouch, a stretch and a settle. */
 const FALL_DELAY_MS = 80;
@@ -55,22 +65,29 @@ const FALL_MS = 420;
 /** When Roo touches down. The home screen times its own entrance to this beat. */
 export const MASCOT_LANDING_MS = FALL_DELAY_MS + FALL_MS;
 
-/** Pivot points on that canvas, as percentages, for rotating and squashing each layer. */
+/** Pivot points from the rig (canvas pixels), turned into percentages for rotating and squashing each layer. */
 // Array form on purpose: React Native's "x% y%" string parser only understands whole-number percentages.
-const pivot = (x: number, y: number): [string, string, number] => [`${x}%`, `${y}%`, 0];
+const pivot = (x: number, y: number): [string, string, number] => [
+    `${(x / CANVAS.width) * 100}%`,
+    `${(y / CANVAS.height) * 100}%`,
+    0,
+];
 const PIVOT = {
-    tail: pivot(66.7, 78.8),
-    earLeft: pivot(36.7, 32.3),
-    earRight: pivot(63.3, 32.3),
-    armLeft: pivot(40.8, 67.7),
-    armRight: pivot(59.2, 67.7),
-    armLeftUp: pivot(30.8, 63.8),
-    armRightUp: pivot(69.2, 63.8),
-    eyes: pivot(50, 36.2),
-    feet: pivot(50, 92),
-    head: pivot(50, 60),
-    base: pivot(50, 96),
+    tail: pivot(322, 470),
+    earLeft: pivot(210, 162),
+    earRight: pivot(310, 162),
+    armLeft: pivot(210, 360),
+    armRight: pivot(310, 360),
+    eyes: pivot(260, 218),
+    body: pivot(260, 520),
+    head: pivot(260, 322),
+    base: pivot(260, 546),
 };
+
+/** Cheer raises both arms this far (degrees) around the shoulders, behind the head as the rig asks. */
+const ARMS_UP = 115;
+/** Oops droops the ears this far (degrees), from the rig notes. */
+const EAR_DROOP = 26;
 
 const loop = (value: SharedValue<number>, from: number, to: number, duration: number) => {
     value.set(from);
@@ -258,69 +275,103 @@ export const Mascot = memo(function Mascot({
     const bodyStyle = useAnimatedStyle(() => ({ transform: [{ scaleY: 1 + breathe.value * 0.02 }] }));
     const headStyle = useAnimatedStyle(() => ({ transform: [{ translateY: breathe.value * size * 0.008 }] }));
     const tailStyle = useAnimatedStyle(() => ({ transform: [{ rotate: `${tail.value * 9}deg` }] }));
-    const droop = mood === "oops" ? 16 : 0;
+    const droop = mood === "oops" ? EAR_DROOP : 0;
     const earLeftStyle = useAnimatedStyle(() => ({ transform: [{ rotate: `${-droop - earLeft.value * 9}deg` }] }));
     const earRightStyle = useAnimatedStyle(() => ({ transform: [{ rotate: `${droop + earRight.value * 9}deg` }] }));
     const eyesStyle = useAnimatedStyle(() => ({ transform: [{ scaleY: blink.value }] }));
-    const armLeftStyle = useAnimatedStyle(() => ({ transform: [{ rotate: `${arms.value * 14}deg` }] }));
-    const armRightStyle = useAnimatedStyle(() => ({ transform: [{ rotate: `${-arms.value * 14}deg` }] }));
+    const raise = mood === "cheer" ? ARMS_UP : 0;
+    const armLeftStyle = useAnimatedStyle(() => ({ transform: [{ rotate: `${raise + arms.value * 14}deg` }] }));
+    const armRightStyle = useAnimatedStyle(() => ({ transform: [{ rotate: `${-raise - arms.value * 14}deg` }] }));
 
-    const part = { width: size, height };
+    const scale = size / ROO.width;
+    const part = { width: CANVAS.width * scale, height: CANVAS.height * scale };
+    const canvas = { position: "absolute", left: -ROO.x * scale, top: -ROO.y * scale, ...part } as const;
     const [Eyes, Mouth] =
-        mood === "oops" ? [EyesOops, MouthOops] : mood === "cheer" ? [EyesCheer, MouthCheer] : [EyesHappy, MouthHappy];
+        mood === "oops"
+            ? [EyesWorried, MouthWobble]
+            : mood === "cheer"
+              ? [EyesClosedHappy, MouthLaugh]
+              : [EyesOpen, MouthSmile];
     const cheer = mood === "cheer";
+    const arm = (side: "left" | "right") => (
+        <Layer
+            style={[
+                { transformOrigin: side === "left" ? PIVOT.armLeft : PIVOT.armRight },
+                side === "left" ? armLeftStyle : armRightStyle,
+            ]}
+        >
+            {side === "left" ? <ArmLeft {...part} /> : <ArmRight {...part} />}
+        </Layer>
+    );
 
     const art = (
-        <View style={part} accessibilityRole="image" accessibilityLabel="Roo the kangaroo">
-            <Layer style={[{ transformOrigin: PIVOT.base }, shadowStyle]}>
-                <Shadow {...part} />
-            </Layer>
-            <Layer style={[{ transformOrigin: PIVOT.base }, characterStyle]}>
-                <Layer style={[{ transformOrigin: PIVOT.tail }, tailStyle]}>
-                    <Tail {...part} />
+        <View style={{ width: size, height }} accessibilityRole="image" accessibilityLabel="Roo the kangaroo">
+            <View pointerEvents="none" style={canvas}>
+                <Layer style={[{ transformOrigin: PIVOT.base }, shadowStyle]}>
+                    <Shadow {...part} />
                 </Layer>
-                <Layer style={{ transformOrigin: PIVOT.feet }}>
-                    <Feet {...part} />
-                </Layer>
-                <Layer style={[{ transformOrigin: PIVOT.feet }, bodyStyle]}>
-                    <Body {...part} />
-                </Layer>
-                {cheer ? null : (
-                    <>
-                        <Layer style={[{ transformOrigin: PIVOT.armLeft }, armLeftStyle]}>
-                            <ArmLeft {...part} />
-                        </Layer>
-                        <Layer style={[{ transformOrigin: PIVOT.armRight }, armRightStyle]}>
-                            <ArmRight {...part} />
-                        </Layer>
-                    </>
-                )}
-                <Layer style={[{ transformOrigin: PIVOT.head }, headStyle]}>
-                    <Layer style={[{ transformOrigin: PIVOT.earLeft }, earLeftStyle]}>
-                        <EarLeft {...part} />
-                    </Layer>
-                    <Layer style={[{ transformOrigin: PIVOT.earRight }, earRightStyle]}>
-                        <EarRight {...part} />
-                    </Layer>
-                    <Head {...part} />
-                    <Layer style={[{ transformOrigin: PIVOT.eyes }, eyesStyle]}>
-                        <Eyes {...part} />
+                <Layer style={[{ transformOrigin: PIVOT.base }, characterStyle]}>
+                    <Layer style={[{ transformOrigin: PIVOT.tail }, tailStyle]}>
+                        <Tail {...part} />
                     </Layer>
                     <Layer>
-                        <Mouth {...part} />
+                        <FootLeft {...part} />
                     </Layer>
+                    <Layer>
+                        <FootRight {...part} />
+                    </Layer>
+                    <Layer style={[{ transformOrigin: PIVOT.body }, bodyStyle]}>
+                        <Body {...part} />
+                        <Layer>
+                            <PouchBlock {...part} />
+                        </Layer>
+                        <Layer>
+                            <PouchFront {...part} />
+                        </Layer>
+                    </Layer>
+                    {/* Raised arms go behind the head; resting arms hold the pouch in front of everything. */}
+                    {cheer ? (
+                        <>
+                            {arm("left")}
+                            {arm("right")}
+                        </>
+                    ) : null}
+                    <Layer style={[{ transformOrigin: PIVOT.head }, headStyle]}>
+                        <Layer style={[{ transformOrigin: PIVOT.earLeft }, earLeftStyle]}>
+                            <EarLeft {...part} />
+                        </Layer>
+                        <Layer style={[{ transformOrigin: PIVOT.earRight }, earRightStyle]}>
+                            <EarRight {...part} />
+                        </Layer>
+                        <Head {...part} />
+                        <Layer>
+                            <Nose {...part} />
+                        </Layer>
+                        <Layer style={[{ transformOrigin: PIVOT.eyes }, eyesStyle]}>
+                            <Eyes {...part} />
+                        </Layer>
+                        <Layer>
+                            <Mouth {...part} />
+                        </Layer>
+                    </Layer>
+                    {cheer ? null : (
+                        <>
+                            {arm("left")}
+                            {arm("right")}
+                        </>
+                    )}
+                    {mood === "oops" ? (
+                        <Layer style={[{ transformOrigin: PIVOT.head }, headStyle]}>
+                            <Sweat {...part} />
+                        </Layer>
+                    ) : null}
                 </Layer>
                 {cheer ? (
-                    <>
-                        <Layer style={[{ transformOrigin: PIVOT.armLeftUp }, armLeftStyle]}>
-                            <ArmLeftUp {...part} />
-                        </Layer>
-                        <Layer style={[{ transformOrigin: PIVOT.armRightUp }, armRightStyle]}>
-                            <ArmRightUp {...part} />
-                        </Layer>
-                    </>
+                    <Layer>
+                        <Sparkles {...part} />
+                    </Layer>
                 ) : null}
-            </Layer>
+            </View>
         </View>
     );
 
