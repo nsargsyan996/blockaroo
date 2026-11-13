@@ -16,6 +16,7 @@
         "format": "prettier --write .",
         "format:check": "prettier --check .",
         "brand:build": "node scripts/build-brand-assets.mjs",
+        "sounds:build": "node scripts/build-sounds.mjs",
         "build:dev": "eas build --profile development",
         "build:preview": "eas build --profile preview",
         "build:prod": "eas build --profile production --platform all",
