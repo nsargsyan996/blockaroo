@@ -1,10 +1,11 @@
 import { Platform } from "react-native";
 
 import { AD_REQUEST_OPTIONS, IS_PRODUCTION_BUILD, PRODUCTION_AD_UNITS } from "@config";
+import { useSettingsStore } from "@store";
 import Constants, { ExecutionEnvironment } from "expo-constants";
 
 import { TAdsService } from "./ads.type";
-import { shouldShowInterstitial } from "./interstitial-policy";
+import { isQuietPeriod, shouldShowInterstitial } from "./interstitial-policy";
 
 type TMobileAdsModule = typeof import("react-native-google-mobile-ads");
 type TRewardedAd = ReturnType<TMobileAdsModule["RewardedAd"]["createForAdRequest"]>;
@@ -127,6 +128,7 @@ export const ads: TAdsService = {
     maybeShowInterstitial: async (gamesFinished) => {
         const ad = interstitial;
         if (!sdk || !ad || !interstitialReady) return;
+        if (isQuietPeriod({ firstOpenedAt: useSettingsStore.getState().firstOpenedAt, now: Date.now() })) return;
         if (!shouldShowInterstitial({ gamesFinished, lastShownAt: lastInterstitialAt, now: Date.now() })) return;
         const closed = new Promise<void>((resolve) => {
             const unsubscribe = ad.addAdEventListener(sdk!.AdEventType.CLOSED, () => {

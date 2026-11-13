@@ -1,0 +1,14 @@
+import { useSettingsStore } from "../settings-store";
+
+describe("settings store", () => {
+    it("records the first launch once and keeps it", () => {
+        useSettingsStore.setState({ firstOpenedAt: null });
+        jest.spyOn(Date, "now").mockReturnValue(1_000);
+        useSettingsStore.getState().markFirstOpened();
+        expect(useSettingsStore.getState().firstOpenedAt).toBe(1_000);
+
+        jest.spyOn(Date, "now").mockReturnValue(9_000);
+        useSettingsStore.getState().markFirstOpened();
+        expect(useSettingsStore.getState().firstOpenedAt).toBe(1_000);
+    });
+});

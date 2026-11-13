@@ -4,9 +4,12 @@ import Constants from "expo-constants";
  * Ads follow Google Play Families and COPPA rules, since the game is made with kids in mind: every request is tagged
  * child-directed and under the age of consent, limited to G-rated content and non-personalized. Rewarded video is
  * opt-in only (the player taps "Watch a video"), banners sit outside the board, and full-screen ads only appear
- * between games.
+ * between games. A new install gets a quiet first week with no banners or interstitials; rewarded video stays
+ * available because the player asks for it.
  */
 export interface TAdPacing {
+    /** No banners or interstitials for this long after the first launch, so new players settle in first. */
+    quietPeriodMs: number;
     /** Never show an interstitial before this many finished games in a session. */
     interstitialAfterGames: number;
     /** Then at most once every this many finished games... */
@@ -16,6 +19,7 @@ export interface TAdPacing {
 }
 
 export const PRODUCTION_PACING: TAdPacing = {
+    quietPeriodMs: 7 * 24 * 60 * 60 * 1000,
     interstitialAfterGames: 2,
     interstitialEveryGames: 3,
     interstitialMinGapMs: 4 * 60 * 1000,
@@ -23,6 +27,7 @@ export const PRODUCTION_PACING: TAdPacing = {
 
 /** Development builds show interstitials every second game so the flow is easy to test. */
 export const DEV_PACING: TAdPacing = {
+    quietPeriodMs: 0,
     interstitialAfterGames: 0,
     interstitialEveryGames: 2,
     interstitialMinGapMs: 0,

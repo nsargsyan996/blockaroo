@@ -3,7 +3,7 @@ import { DEV_PACING, PRODUCTION_PACING } from "@config";
 import { ads as nativeAds } from "../ads.native";
 import { ads as webAds } from "../ads.web";
 import { useDevAdStore } from "../dev-ad-store";
-import { shouldShowInterstitial as policy } from "../interstitial-policy";
+import { isQuietPeriod, shouldShowInterstitial as policy } from "../interstitial-policy";
 
 const shouldShowInterstitial = (args: { gamesFinished: number; lastShownAt: number | null; now: number }) =>
     policy({ ...args, pacing: PRODUCTION_PACING });
@@ -24,6 +24,26 @@ describe("interstitial pacing", () => {
         const now = 10_000_000;
         expect(shouldShowInterstitial({ gamesFinished: 5, lastShownAt: now - 60_000, now })).toBe(false);
         expect(shouldShowInterstitial({ gamesFinished: 5, lastShownAt: now - 10 * 60_000, now })).toBe(true);
+    });
+});
+
+describe("quiet first week", () => {
+    const day = 24 * 60 * 60 * 1000;
+    const firstOpenedAt = 50 * day;
+
+    it("keeps banners and interstitials off for the first seven days after install", () => {
+        const quiet = (now: number) => isQuietPeriod({ firstOpenedAt, now, pacing: PRODUCTION_PACING });
+        expect(quiet(firstOpenedAt)).toBe(true);
+        expect(quiet(firstOpenedAt + 7 * day - 1)).toBe(true);
+        expect(quiet(firstOpenedAt + 7 * day)).toBe(false);
+    });
+
+    it("stays quiet until the first launch is recorded", () => {
+        expect(isQuietPeriod({ firstOpenedAt: null, now: day, pacing: PRODUCTION_PACING })).toBe(true);
+    });
+
+    it("is off in development so ads are easy to test", () => {
+        expect(isQuietPeriod({ firstOpenedAt: null, now: day, pacing: DEV_PACING })).toBe(false);
     });
 });
 
