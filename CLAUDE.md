@@ -1,4 +1,4 @@
-# Blockaroo - Claude Code Configuration
+# Hoppy Blocks - Claude Code Configuration
 
 All-ages block puzzle game, safe for kids (8×8 board, three pieces per turn, line clears, streaks; Classic and
 Adventure). Expo 54 / React Native 0.81, pnpm. Conventions follow `frontend-platform/apps/cex-mobile`.

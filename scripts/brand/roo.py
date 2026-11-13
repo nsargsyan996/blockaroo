@@ -1,5 +1,5 @@
 """
-Draws Roo, Blockaroo's kangaroo mascot, as layered SVG parts.
+Draws Roo, Hoppy Blocks' kangaroo mascot, as layered SVG parts.
 
 Every part shares one 240x260 canvas so the parts stack exactly; the app animates each layer separately (ears,
 tail, arms, eyes...). Composed single-file versions (roo-happy / roo-oops / roo-cheer) are kept for reference.

@@ -1,4 +1,4 @@
-// Blockaroo brand palette: a royal blue arcade stage with glossy jewel blocks. Tailwind (tailwind.config.js) mirrors
+// Hoppy Blocks brand palette: a royal blue arcade stage with glossy jewel blocks. Tailwind (tailwind.config.js) mirrors
 // the UI tokens, and runtime styles (gradients, SVG fills, blocks) read them from here.
 
 export const palette = {

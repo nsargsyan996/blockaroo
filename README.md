@@ -1,4 +1,4 @@
-# Blockaroo
+# Hoppy Blocks
 
 A block puzzle game for all ages (and safe for kids), starring Roo the kangaroo. You drag pieces onto an 8×8 board. Fill
 a whole row or column and it clears. Clear lines back to back to build a streak.
@@ -120,8 +120,8 @@ them in `app.config.ts` before the first store upload.
 - **App Store**: Apple's Kids Category restricts third-party advertising and analytics. Either list the game in Games ›
   Puzzle with a 4+ rating, or remove ads from the iOS build if you want the Kids Category. Check the current App Review
   Guidelines (1.3 and 5.1.4) before submitting.
-- **Both**: a privacy policy URL, COPPA (US) and GDPR-K (EU) compliance, and a trademark search for the name "Blockaroo"
-  in your target markets before you buy the domain or store listings.
+- **Both**: a privacy policy URL, COPPA (US) and GDPR-K (EU) compliance, and a trademark search for the name "Hoppy
+  Blocks" in your target markets before you buy the domain or store listings.
 
 ## Brand
 

@@ -5,15 +5,15 @@ type TAppVariant = "development" | "preview" | "production";
 const APP_VARIANT = (process.env.APP_VARIANT ?? "development") as TAppVariant;
 
 const BUNDLE_ID: Record<TAppVariant, string> = {
-    development: "com.blockaroo.game.dev",
-    preview: "com.blockaroo.game.preview",
-    production: "com.blockaroo.game",
+    development: "com.hoppyblocks.game.dev",
+    preview: "com.hoppyblocks.game.preview",
+    production: "com.hoppyblocks.game",
 };
 
 const APP_NAME: Record<TAppVariant, string> = {
-    development: "Blockaroo (Dev)",
-    preview: "Blockaroo (Preview)",
-    production: "Blockaroo",
+    development: "Hoppy Blocks (Dev)",
+    preview: "Hoppy Blocks (Preview)",
+    production: "Hoppy Blocks",
 };
 
 // Google's public sample app IDs. They only serve test ads, so every non-production build is safe to run.
@@ -26,8 +26,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ...config,
     name: APP_NAME[APP_VARIANT],
     owner: "nsargsyan",
+    // The slug ties the app to its EAS project (extra.eas.projectId), so it keeps the original working name.
     slug: "blockaroo",
-    scheme: "blockaroo",
+    scheme: "hoppyblocks",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",

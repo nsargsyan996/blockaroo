@@ -8,10 +8,26 @@ import { fileURLToPath } from "node:url";
 const BRAND = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "src", "assets", "brand");
 const INK = "#0A1C5E";
 const DEPTH = 12;
-// B L O C K A R O O: the three block O's keep their own colors.
-const COLORS = ["#FF9A3C", "#3ED68A", null, "#FF6FC1", "#FFD23F", "#8F6BFF", "#38C7F0", null, null];
+// H O P P Y  B L O C K S: the two block O's keep their own colors.
+const COLORS = [
+    "#FF9A3C",
+    null,
+    "#3ED68A",
+    "#FF6FC1",
+    "#FFD23F",
+    "#8F6BFF",
+    "#38C7F0",
+    null,
+    "#3ED68A",
+    "#FFD23F",
+    "#FF9A3C",
+];
 
 const src = readFileSync(join(BRAND, "wordmark-base.svg"), "utf8");
+const [width, height] = src
+    .match(/viewBox="0 0 (\d+) (\d+)"/)
+    .slice(1)
+    .map(Number);
 const elements = src.match(/<(path|rect)[^>]*\/>/g);
 const out = [];
 let letter = 0;
@@ -33,11 +49,11 @@ for (const el of elements) {
         out.push(`<path${evenodd} d="${d}" fill="${INK}" transform="translate(0 ${k})"/>`);
     out.push(`<path d="${d}" fill="none" stroke="${INK}" stroke-width="22" stroke-linejoin="round"/>`);
     out.push(`<path${evenodd} d="${d}" fill="${fill}"/>`);
-    out.push(`<rect x="0" y="0" width="1478" height="108" fill="#FFFFFF" opacity="0.3" clip-path="url(#${id})"/>`);
+    out.push(`<rect x="0" y="0" width="${width}" height="108" fill="#FFFFFF" opacity="0.3" clip-path="url(#${id})"/>`);
     letter++;
 }
 writeFileSync(
     join(BRAND, "wordmark.svg"),
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1478 230">\n${out.join("\n")}\n</svg>\n`
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}">\n${out.join("\n")}\n</svg>\n`
 );
 console.log(`wordmark.svg: ${letter} letters`);

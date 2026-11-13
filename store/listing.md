@@ -22,13 +22,13 @@ listings (the app itself still runs in Armenian).
 ### App Store name [30]
 
 ```text
-Blockaroo: Block Puzzle
+Hoppy Blocks: Puzzle Game
 ```
 
 ### Google Play title [30]
 
 ```text
-Blockaroo: Block Puzzle Game
+Hoppy Blocks: Puzzle Game
 ```
 
 ### App Store subtitle [30]
@@ -46,7 +46,7 @@ Help Roo the kangaroo clear the board! Drag blocks, fill rows and columns, build
 ### App Store keywords [100]
 
 ```text
-blocks,brain,logic,family,grid,8x8,gems,levels,offline,relaxing,kangaroo,tile,lines,classic,cube
+block,brain,logic,family,grid,8x8,gems,levels,offline,relaxing,kangaroo,tile,lines,classic,cube
 ```
 
 ### Google Play short description [80]
@@ -58,7 +58,7 @@ Drag blocks, clear lines and collect gems with Roo in 100 Adventure levels!
 ### Full description [4000]
 
 ```text
-Blockaroo is a friendly block puzzle for the whole family, starring Roo the kangaroo.
+Hoppy Blocks is a friendly block puzzle for the whole family, starring Roo the kangaroo.
 
 Drag pieces onto the 8×8 board. Fill a whole row or column and it clears with a blast. Clear lines back to back to build a streak and watch your score jump. Easy to learn, hard to put down.
 
@@ -94,7 +94,7 @@ Ready to clear some lines? Roo is waiting!
 ### What's new (first release)
 
 ```text
-Hello from Roo! This is the first release of Blockaroo: Classic mode, 100 Adventure levels, and lots of gems to collect.
+Hello from Roo! This is the first release of Hoppy Blocks: Classic mode, 100 Adventure levels, and lots of gems to collect.
 ```
 
 ---
@@ -104,13 +104,13 @@ Hello from Roo! This is the first release of Blockaroo: Classic mode, 100 Advent
 ### App Store name [30]
 
 ```text
-Blockaroo: Блок-головоломка
+Hoppy Blocks: Головоломка
 ```
 
 ### Google Play title [30]
 
 ```text
-Blockaroo: Блоки и головоломка
+Hoppy Blocks: Головоломка
 ```
 
 ### App Store subtitle [30]
@@ -140,7 +140,7 @@ Blockaroo: Блоки и головоломка
 ### Full description [4000]
 
 ```text
-Blockaroo — добрая головоломка с блоками для всей семьи, где главный герой — кенгуру Ру.
+Hoppy Blocks — добрая головоломка с блоками для всей семьи, где главный герой — кенгуру Ру.
 
 Перетаскивай фигуры на поле 8×8. Заполни целый ряд или столбец, и он взорвётся. Собирай линии подряд, чтобы набрать серию и увидеть, как растёт счёт. Легко научиться, трудно оторваться.
 
@@ -176,7 +176,7 @@ Blockaroo — добрая головоломка с блоками для вс�
 ### What's new (first release)
 
 ```text
-Привет от Ру! Это первая версия Blockaroo: режим Классика, 100 уровней Приключения и много камней для сбора.
+Привет от Ру! Это первая версия Hoppy Blocks: режим Классика, 100 уровней Приключения и много камней для сбора.
 ```
 
 ---
@@ -186,7 +186,7 @@ Blockaroo — добрая головоломка с блоками для вс�
 ### Google Play title [30]
 
 ```text
-Blockaroo: Բլոկ գլուխկոտրուկ
+Hoppy Blocks: Գլուխկոտրուկ
 ```
 
 ### Google Play short description [80]
@@ -198,7 +198,7 @@ Blockaroo: Բլոկ գլուխկոտրուկ
 ### Full description [4000]
 
 ```text
-Blockaroo-ն բլոկներով բարի գլուխկոտրուկ է ամբողջ ընտանիքի համար, որի գլխավոր հերոսը Ռու ագեվազն է։
+Hoppy Blocks-ը բլոկներով բարի գլուխկոտրուկ է ամբողջ ընտանիքի համար, որի գլխավոր հերոսը Ռու ագեվազն է։
 
 Քաշիր պատկերները 8×8 դաշտի վրա։ Լցրու ամբողջ տողը կամ սյունը, և այն կպայթի։ Մաքրիր տողերն իրար հետևից, որ սերիա հավաքես և միավորներդ արագ աճեն։ Հեշտ է սովորել, դժվար է կանգ առնել։
 
@@ -234,7 +234,7 @@ Blockaroo-ն բլոկներով բարի գլուխկոտրուկ է ամբող�
 ### What's new (first release)
 
 ```text
-Բարև Ռուից։ Սա Blockaroo-ի առաջին տարբերակն է՝ Դասական ռեժիմ, Արկածի 100 մակարդակ և շատ գոհարներ հավաքելու համար։
+Բարև Ռուից։ Սա Hoppy Blocks-ի առաջին տարբերակն է՝ Դասական ռեժիմ, Արկածի 100 մակարդակ և շատ գոհարներ հավաքելու համար։
 ```
 
 ---
@@ -299,5 +299,5 @@ AdMob apps there are usually rejected.
 
 **App Review notes.** Suggested text:
 
-> Blockaroo has no login. Ads come from Google AdMob, are tagged child-directed and under the age of consent, limited to
-> G-rated content and non-personalized. Rewarded video is opt-in ("Keep playing" on the game-over card).
+> Hoppy Blocks has no login. Ads come from Google AdMob, are tagged child-directed and under the age of consent, limited
+> to G-rated content and non-personalized. Rewarded video is opt-in ("Keep playing" on the game-over card).

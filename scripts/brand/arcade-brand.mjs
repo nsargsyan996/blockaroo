@@ -72,9 +72,15 @@ writeFileSync(join(BRAND, "icon.svg"), svg(1024, 1024, `${stage(1024, 1024)}\n${
 writeFileSync(join(BRAND, "adaptive-icon.svg"), svg(1024, 1024, cluster(512, 512, 236)));
 
 // Splash: cluster over the candy wordmark, transparent, on the splash background color from app.config.ts.
-const wordmark = readFileSync(join(BRAND, "wordmark.svg"), "utf8").replace(
+const wordmarkSrc = readFileSync(join(BRAND, "wordmark.svg"), "utf8");
+const [wmWidth, wmHeight] = wordmarkSrc
+    .match(/viewBox="0 0 (\d+) (\d+)"/)
+    .slice(1)
+    .map(Number);
+const wmHeightOnSplash = Math.round((1200 * wmHeight) / wmWidth);
+const wordmark = wordmarkSrc.replace(
     /^<svg[^>]*>/,
-    `<svg x="0" y="760" width="1200" height="187" viewBox="0 0 1478 230">`
+    `<svg x="0" y="${850 - wmHeightOnSplash / 2}" width="1200" height="${wmHeightOnSplash}" viewBox="0 0 ${wmWidth} ${wmHeight}">`
 );
 writeFileSync(join(BRAND, "splash.svg"), svg(1200, 1010, `${cluster(600, 380, 250)}\n${wordmark}`));
 console.log("icon.svg, adaptive-icon.svg, splash.svg");
