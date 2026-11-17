@@ -38,23 +38,35 @@ const setRewardedReady = (ready: boolean) => {
     readyListeners.forEach((listener) => listener(ready));
 };
 
-/** Google's test units everywhere except a production build that has real IDs configured. */
-export const adUnitId = (module: TMobileAdsModule, kind: "rewarded" | "interstitial" | "banner") => {
-    const production = PRODUCTION_AD_UNITS[kind][Platform.OS === "ios" ? "ios" : "android"];
-    if (IS_PRODUCTION_BUILD && production) return production;
-    return {
-        rewarded: module.TestIds.REWARDED,
-        interstitial: module.TestIds.INTERSTITIAL,
-        banner: module.TestIds.ADAPTIVE_BANNER,
-    }[kind];
+type TAdKind = "rewarded" | "interstitial" | "banner";
+
+/**
+ * Real IDs in a production build, Google's test units everywhere else. A production build without real IDs gets null
+ * and shows no ads at all, so test ads never reach the store.
+ */
+export const pickAdUnit = (args: { production: string; test: string; isProductionBuild: boolean }) => {
+    if (!args.isProductionBuild) return args.test;
+    return args.production || null;
 };
 
-const unitId = (kind: "rewarded" | "interstitial") => (sdk ? adUnitId(sdk, kind) : "");
+export const adUnitId = (module: TMobileAdsModule, kind: TAdKind) =>
+    pickAdUnit({
+        production: PRODUCTION_AD_UNITS[kind][Platform.OS === "ios" ? "ios" : "android"],
+        test: {
+            rewarded: module.TestIds.REWARDED,
+            interstitial: module.TestIds.INTERSTITIAL,
+            banner: module.TestIds.ADAPTIVE_BANNER,
+        }[kind],
+        isProductionBuild: IS_PRODUCTION_BUILD,
+    });
+
+const unitId = (kind: "rewarded" | "interstitial") => (sdk ? adUnitId(sdk, kind) : null);
 
 const loadRewarded = () => {
-    if (!sdk) return;
+    const id = unitId("rewarded");
+    if (!sdk || !id) return;
     setRewardedReady(false);
-    rewarded = sdk.RewardedAd.createForAdRequest(unitId("rewarded"), AD_REQUEST_OPTIONS);
+    rewarded = sdk.RewardedAd.createForAdRequest(id, AD_REQUEST_OPTIONS);
     rewarded.addAdEventListener(sdk.RewardedAdEventType.LOADED, () => setRewardedReady(true));
     rewarded.addAdEventListener(sdk.AdEventType.ERROR, () => {
         setRewardedReady(false);
@@ -64,9 +76,10 @@ const loadRewarded = () => {
 };
 
 const loadInterstitial = () => {
-    if (!sdk) return;
+    const id = unitId("interstitial");
+    if (!sdk || !id) return;
     interstitialReady = false;
-    interstitial = sdk.InterstitialAd.createForAdRequest(unitId("interstitial"), AD_REQUEST_OPTIONS);
+    interstitial = sdk.InterstitialAd.createForAdRequest(id, AD_REQUEST_OPTIONS);
     interstitial.addAdEventListener(sdk.AdEventType.LOADED, () => {
         interstitialReady = true;
     });
@@ -82,6 +95,12 @@ export const ads: TAdsService = {
         if (sdk) return;
         sdk = loadAdsModule();
         if (!sdk) return;
+        // No ad units at all (a production build before AdMob is set up): don't even start the SDK.
+        const kinds: TAdKind[] = ["rewarded", "interstitial", "banner"];
+        if (kinds.every((kind) => !adUnitId(sdk!, kind))) {
+            sdk = null;
+            return;
+        }
         try {
             const mobileAds = sdk.default();
             await mobileAds.setRequestConfiguration({

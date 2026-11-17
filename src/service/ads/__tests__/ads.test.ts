@@ -1,6 +1,6 @@
 import { DEV_PACING, PRODUCTION_PACING } from "@config";
 
-import { ads as nativeAds } from "../ads.native";
+import { ads as nativeAds, pickAdUnit } from "../ads.native";
 import { ads as webAds } from "../ads.web";
 import { useDevAdStore } from "../dev-ad-store";
 import { isQuietPeriod, shouldShowInterstitial as policy } from "../interstitial-policy";
@@ -108,5 +108,19 @@ describe("native ads", () => {
         const shown = nativeAds.showRewarded();
         rewarded.emit(sdk.AdEventType.CLOSED);
         await expect(shown).resolves.toBe(false);
+    });
+});
+
+describe("ad unit choice", () => {
+    it("uses test units outside production builds", () => {
+        expect(pickAdUnit({ production: "real", test: "test", isProductionBuild: false })).toBe("test");
+    });
+
+    it("uses the real unit in a production build", () => {
+        expect(pickAdUnit({ production: "real", test: "test", isProductionBuild: true })).toBe("real");
+    });
+
+    it("shows no ads in a production build without real IDs, never test ads", () => {
+        expect(pickAdUnit({ production: "", test: "test", isProductionBuild: true })).toBeNull();
     });
 });
