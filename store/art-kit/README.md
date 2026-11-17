@@ -1,7 +1,19 @@
-# Hoppy Blocks: Art Kit v3
+# Hoppy Blocks: Art Kit v4
 
 All artwork was made from scratch as vector shapes. No stock assets, traced images or references to other games were
 used.
+
+## New in v4: App Store product page header (iOS 27+)
+
+Folder 8_app_store_header:
+
+- `header_3840x1646.png` (in `app-store-header/`): upload this in App Store Connect under **Header and Search Results →
+  Header**.
+    - 21:9, no transparency.
+    - Roo and the logo sit inside Apple's art safe area (1646 × 661 at x 1097, y 493).
+- `universal_5244x2950.png`: optional. One PNG for both the header and the search card. Roo and the logo sit inside
+  Apple's safe area (1402 × 962 at x 1921, y 660).
+- `*_safe_area_check.png`: the same images with the safe area outlined. These are for checking only. Don't upload them.
 
 ## Changes since v2
 
@@ -90,6 +102,7 @@ Stage: #2B5BE0 / #1438B8 / #0A1F7A · Outline: #0A1C5E Jewels: aqua #38C7F0, eme
 - `source_generator/` builds everything:
     - `python3 build.py` makes the art and `python3 rig.py` makes the rig.
     - Both need fontTools and rsvg-convert.
+    - `python3 header.py` makes the App Store header images.
     - `python3 check.py` runs the pixel checks for holes and edge clipping. It also needs numpy, scipy and Pillow.
     - The scripts read Lilita One from `node_modules/@fontsource/lilita-one`. Run `npm i @fontsource/lilita-one` first.
 
