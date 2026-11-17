@@ -36,7 +36,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     backgroundColor: "#1438B8",
     ios: {
         bundleIdentifier: BUNDLE_ID[APP_VARIANT],
-        supportsTablet: true,
+        supportsTablet: false,
         infoPlist: {
             ITSAppUsesNonExemptEncryption: false,
         },
