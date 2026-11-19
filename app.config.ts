@@ -64,6 +64,16 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         "expo-localization",
         "expo-audio",
         [
+            "expo-build-properties",
+            {
+                android: {
+                    // R8 strips classes that libraries load by reflection (WorkManager's WorkDatabase_Impl, pulled in
+                    // by the ads SDK), which crashed every release build on launch.
+                    enableMinifyInReleaseBuilds: false,
+                },
+            },
+        ],
+        [
             "expo-splash-screen",
             {
                 image: "./assets/images/splash-icon.png",
