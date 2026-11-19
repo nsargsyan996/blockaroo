@@ -30,7 +30,7 @@ module.exports = {
     configVersion: 0,
     apple: {
         // Must match `version` in app.config.ts, or App Store Connect won't offer the build for this version.
-        version: "1.0.0",
+        version: "1.0.1",
         copyright: "2026 Narek Sargsyan",
         categories: [["GAMES", "GAMES_PUZZLE", "GAMES_FAMILY"]],
         info: {

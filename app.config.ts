@@ -29,7 +29,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     // The slug ties the app to its EAS project (extra.eas.projectId), so it keeps the original working name.
     slug: "blockaroo",
     scheme: "hoppyblocks",
-    version: "1.0.0",
+    version: "1.0.1",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
     userInterfaceStyle: "dark",
