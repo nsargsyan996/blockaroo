@@ -24,6 +24,7 @@
         "levels": "Уровни",
         "level": "Уровень {{level}}",
         "goals": "Цели",
+        "hint": "Подсказка, осталось: {{count}}",
         "combo": "Комбо x{{count}}",
         "praise": {
             "good": "Хорошо!",

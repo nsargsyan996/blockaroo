@@ -6,6 +6,8 @@ import Animated, {
     useAnimatedStyle,
     useSharedValue,
     withDelay,
+    withRepeat,
+    withSequence,
     withSpring,
     withTiming,
 } from "react-native-reanimated";
@@ -22,7 +24,8 @@ export interface PieceTrayProps {
     board: TBoard;
     layout: TBoardLayout;
     drag: TDragShared;
-    activeSlot: number;
+    /** Slot the current hint points at, or -1. */
+    hintSlot: number;
     disabled: boolean;
     onPickUp: (slot: number) => void;
     /** Fractional grid position of the piece's top-left cell. */
@@ -30,23 +33,35 @@ export interface PieceTrayProps {
     onRelease: (slot: number) => void;
 }
 
-interface TraySlotProps extends Omit<PieceTrayProps, "tray" | "activeSlot"> {
+interface TraySlotProps extends Omit<PieceTrayProps, "tray" | "hintSlot"> {
     piece: TPiece | null;
     slot: number;
-    hidden: boolean;
+    hinted: boolean;
 }
 
-const TraySlot = memo(function TraySlot(props: TraySlotProps) {
-    const { piece, slot, board, layout, drag, hidden, disabled, onPickUp, onHover, onRelease } = props;
-    const { trayPitch, pitch, gap, slotWidth, slotHeight } = layout;
-    const enter = useSharedValue(0);
+/** Scale a new piece starts from when it pops into the tray. */
+const ENTER_FROM = 0.6;
 
-    // New pieces bounce into the tray one after another.
+const TraySlot = memo(function TraySlot(props: TraySlotProps) {
+    const { piece, slot, board, layout, drag, hinted, disabled, onPickUp, onHover, onRelease } = props;
+    const { trayPitch, pitch, gap, slotWidth, slotHeight } = layout;
+    const enter = useSharedValue(ENTER_FROM);
+    const nudge = useSharedValue(0);
+
+    // New pieces pop into the tray one after another. They start most of the way there and settle fast, so the next
+    // piece can be grabbed without waiting for the animation.
     useEffect(() => {
         if (!piece) return;
-        enter.value = 0;
-        enter.value = withDelay(slot * 70, withSpring(1, { damping: 11, stiffness: 180 }));
+        enter.value = ENTER_FROM;
+        enter.value = withDelay(slot * 30, withSpring(1, { damping: 14, stiffness: 320 }));
     }, [piece, slot, enter]);
+
+    // The piece a hint points at keeps bobbing until it is played.
+    useEffect(() => {
+        nudge.value = hinted
+            ? withRepeat(withSequence(withTiming(1, { duration: 380 }), withTiming(0, { duration: 380 })), -1)
+            : withTiming(0, { duration: 120 });
+    }, [hinted, nudge]);
 
     const fits = useMemo(() => (piece ? canFitAnywhere(board, getShape(piece.shapeId)) : false), [board, piece]);
 
@@ -79,13 +94,18 @@ const TraySlot = memo(function TraySlot(props: TraySlotProps) {
                 }
             })
             .onFinalize(() => {
+                drag.dropped.value = drag.dropped.value | (1 << slot);
                 drag.slot.value = -1;
                 drag.grow.value = 0;
                 runOnJS(onRelease)(slot);
             });
     }, [piece, pitch, disabled, drag, slot, onPickUp, onHover, onRelease]);
 
-    const style = useAnimatedStyle(() => ({ transform: [{ scale: enter.value }] }));
+    // Hiding the tray copy while it is dragged happens on the UI thread, in step with the drag layer showing it.
+    const style = useAnimatedStyle(() => ({
+        opacity: drag.slot.value === slot || (drag.dropped.value >> slot) & 1 ? 0 : fits ? 1 : 0.35,
+        transform: [{ scale: enter.value * (1 + 0.14 * nudge.value) }],
+    }));
 
     const size = piece ? pieceSize(piece.shapeId, trayPitch) : { width: 0, height: 0 };
     return (
@@ -93,16 +113,12 @@ const TraySlot = memo(function TraySlot(props: TraySlotProps) {
             <View
                 style={{ width: slotWidth, height: slotHeight }}
                 className="items-center justify-center"
-                accessibilityRole="button"
+                // No "button" role here: on web, gesture handler does not capture the pointer for button views, so a
+                // drag would stop as soon as the pointer left the piece.
                 accessibilityLabel={piece ? `Piece ${slot + 1}` : undefined}
             >
                 {piece ? (
-                    <Animated.View
-                        style={[
-                            style,
-                            { opacity: hidden ? 0 : fits ? 1 : 0.35, width: size.width, height: size.height },
-                        ]}
-                    >
+                    <Animated.View style={[style, { width: size.width, height: size.height }]}>
                         <Piece shapeId={piece.shapeId} color={piece.color} pitch={trayPitch} gap={gap * 0.6} />
                     </Animated.View>
                 ) : null}
@@ -115,7 +131,7 @@ const TraySlot = memo(function TraySlot(props: TraySlotProps) {
  * The three pieces to place, side by side: under the board in portrait, in the side column in landscape. Each slot
  * is a big touch target; a piece that cannot fit anywhere is dimmed.
  */
-export const PieceTray = memo(function PieceTray({ tray, activeSlot, ...rest }: PieceTrayProps) {
+export const PieceTray = memo(function PieceTray({ tray, hintSlot, ...rest }: PieceTrayProps) {
     return (
         <View className="flex-row">
             {tray.map((piece, slot) => (
@@ -123,7 +139,7 @@ export const PieceTray = memo(function PieceTray({ tray, activeSlot, ...rest }: 
                     key={piece?.uid ?? `empty-${slot}`}
                     piece={piece}
                     slot={slot}
-                    hidden={activeSlot === slot}
+                    hinted={hintSlot === slot}
                     {...rest}
                 />
             ))}

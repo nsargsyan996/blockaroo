@@ -63,15 +63,28 @@ export const lineCells = (rows: number[], cols: number[]): number[] => {
 };
 
 /**
- * Places a shape and clears every completed row and column at once. The caller must check canPlace first.
+ * Rows and columns that become full once the shape's cells are filled. Only the lines the shape touches can change,
+ * so only those are checked; `board` must already hold the shape.
+ */
+const fullLinesTouched = (board: TBoard, shape: TShape, row: number, col: number) => {
+    const rows: number[] = [];
+    const cols: number[] = [];
+    for (let r = row; r < row + shape.rows; r++) if (isRowFull(board, r)) rows.push(r);
+    for (let c = col; c < col + shape.cols; c++) if (isColFull(board, c)) cols.push(c);
+    return { rows, cols };
+};
+
+/**
+ * Places a shape and clears every completed row and column at once. The caller must check canPlace first, and the
+ * board must not already hold a completed line.
  */
 export const placeShape = (board: TBoard, shape: TShape, row: number, col: number, color: number): TPlacement => {
     const next = board.slice();
     const placedCells = shape.cells.map(([dr, dc]) => cellIndex(row + dr, col + dc));
     for (const index of placedCells) next[index] = color;
 
-    const { rows, cols } = findFullLines(next);
-    const clearedCells = lineCells(rows, cols);
+    const { rows, cols } = fullLinesTouched(next, shape, row, col);
+    const clearedCells = rows.length + cols.length > 0 ? lineCells(rows, cols) : [];
     for (const index of clearedCells) next[index] = 0;
 
     return { board: next, placedCells, clearedRows: rows, clearedCols: cols, clearedCells };
@@ -79,10 +92,11 @@ export const placeShape = (board: TBoard, shape: TShape, row: number, col: numbe
 
 /** Lines that would clear if the shape were placed here. Used for the drag preview. */
 export const previewClears = (board: TBoard, shape: TShape, row: number, col: number) => {
-    const next = board.slice();
-    for (const [dr, dc] of shape.cells) next[cellIndex(row + dr, col + dc)] = 1;
-    const { rows, cols } = findFullLines(next);
-    return { rows, cols, cells: lineCells(rows, cols) };
+    // Fill the shape in, look, and take it out again: cheaper than copying the board for every spot tried.
+    for (const [dr, dc] of shape.cells) board[cellIndex(row + dr, col + dc)] = 1;
+    const { rows, cols } = fullLinesTouched(board, shape, row, col);
+    for (const [dr, dc] of shape.cells) board[cellIndex(row + dr, col + dc)] = 0;
+    return { rows, cols, cells: rows.length + cols.length > 0 ? lineCells(rows, cols) : [] };
 };
 
 export const isBoardEmpty = (board: TBoard) => board.every((cell) => cell === 0);

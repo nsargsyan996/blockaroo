@@ -7,8 +7,10 @@ import {
     placePiece,
     revive,
     starsFor,
+    takeHint,
     TGameMode,
     TGameState,
+    THint,
     TMoveEvent,
 } from "@engine";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -49,18 +51,22 @@ interface GameStore {
     progress: TAdventureProgress;
     lastMove: TLastMove | null;
     reviveFlash: { id: number; blocks: TClearedBlock[] } | null;
+    /** The suggestion on screen, until the next move. Not saved. */
+    hint: THint | null;
     hasHydrated: boolean;
     startClassic: (seed?: number) => void;
     resumeClassic: () => void;
     startLevel: (levelId: number, seed?: number) => void;
     place: (slot: number, row: number, col: number) => TLastMove | null;
     revive: () => boolean;
+    /** Spends one of the game's hints and shows it. False when none are left or one is already showing. */
+    askHint: () => boolean;
 }
 
 const STORE_VERSION = 2;
 let moveId = 0;
 
-const resetEffects = { lastMove: null, reviveFlash: null } as const;
+const resetEffects = { lastMove: null, reviveFlash: null, hint: null } as const;
 
 export const useGameStore = create<GameStore>()(
     persist(
@@ -74,6 +80,7 @@ export const useGameStore = create<GameStore>()(
             progress: { unlocked: 1, stars: {} },
             lastMove: null,
             reviveFlash: null,
+            hint: null,
             hasHydrated: false,
 
             startClassic: (seed) =>
@@ -136,6 +143,7 @@ export const useGameStore = create<GameStore>()(
                     gamesFinished: finished ? state.gamesFinished + 1 : state.gamesFinished,
                     progress,
                     lastMove,
+                    hint: null,
                 });
                 return lastMove;
             },
@@ -155,7 +163,18 @@ export const useGameStore = create<GameStore>()(
                         blocks: result.clearedCells.map((index) => ({ index, color: game.board[index], gem: 0 })),
                     },
                     lastMove: null,
+                    hint: null,
                 });
+                return true;
+            },
+
+            askHint: () => {
+                const state = get();
+                const game = state[state.activeMode];
+                if (!game || state.hint) return false;
+                const result = takeHint(game);
+                if (!result) return false;
+                set({ [state.activeMode]: result.state, hint: result.hint });
                 return true;
             },
         }),

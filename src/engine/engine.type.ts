@@ -75,6 +75,10 @@ export interface TGameState {
     linesCleared: number;
     moves: number;
     revivesUsed: number;
+    /** Stuck tray pieces swapped so far (see MAX_RESCUES). Missing in saves from before rescues existed. */
+    rescuesUsed?: number;
+    /** Hints taken so far (see HINTS_PER_GAME). Missing in saves from before hints existed. */
+    hintsUsed?: number;
     status: TGameStatus;
     rngState: number;
     nextUid: number;
@@ -98,6 +102,8 @@ export interface TMoveEvent {
     combo: number;
     perfectClear: boolean;
     dealt: boolean;
+    /** Tray slots whose piece no longer fit anywhere and was swapped for one that does. */
+    rescuedSlots: number[];
     gameOver: boolean;
     collectedGems: { index: number; gem: TGem }[];
     /** Adventure: every goal of the level is met. */

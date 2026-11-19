@@ -1,7 +1,7 @@
 import { boardFromArt } from "@test-utils";
 
 import { findPlacements } from "../board";
-import { MAX_REVIVES, TRAY_SIZE } from "../constants";
+import { MAX_RESCUES, MAX_REVIVES, TRAY_SIZE } from "../constants";
 import { TGameState } from "../engine.type";
 import {
     canPlacePiece,
@@ -79,7 +79,25 @@ describe("game", () => {
         expect(result.state.linesCleared).toBe(1);
     });
 
-    it("ends the game when no remaining piece fits", () => {
+    it("ends the game when no remaining piece fits and the swaps are used up", () => {
+        const board = boardFromArt([
+            "#.#.#.#.",
+            ".#.#.#.#",
+            "#.#.#.#.",
+            ".#.#.#.#",
+            "#.#.#.#.",
+            ".#.#.#.#",
+            "#.#.#.#.",
+            ".#.#.#..",
+        ]);
+        const game = withTray({ ...createGame(1), board, rescuesUsed: MAX_RESCUES }, ["dot", "bar2-h", null]);
+        const result = placePiece(game, 0, 7, 7)!;
+        expect(result.event.gameOver).toBe(true);
+        expect(result.state.status).toBe("over");
+        expect(isStuck(result.state.board, result.state.tray)).toBe(true);
+    });
+
+    it("swaps a leftover piece that no longer fits instead of ending the game", () => {
         const board = boardFromArt([
             "#.#.#.#.",
             ".#.#.#.#",
@@ -92,9 +110,23 @@ describe("game", () => {
         ]);
         const game = withTray({ ...createGame(1), board }, ["dot", "bar2-h", null]);
         const result = placePiece(game, 0, 7, 7)!;
-        expect(result.event.gameOver).toBe(true);
-        expect(result.state.status).toBe("over");
-        expect(isStuck(result.state.board, result.state.tray)).toBe(true);
+        // Only single cells are free, so the swapped-in piece has to be one that fits there.
+        expect(result.event.gameOver).toBe(false);
+        expect(result.event.rescuedSlots).toEqual([1]);
+        expect(result.state.status).toBe("playing");
+        expect(result.state.rescuesUsed).toBe(1);
+        expect(result.state.tray[1]!.shapeId).toBe("dot");
+        expect(result.state.tray[1]!.uid).toBe(game.nextUid);
+        expect(result.state.tray[0]).toBeNull();
+        expect(isStuck(result.state.board, result.state.tray)).toBe(false);
+    });
+
+    it("does not swap pieces while a move is still possible", () => {
+        const game = withTray(createGame(1), ["dot", "bar2-h", null]);
+        const result = placePiece(game, 0, 0, 0)!;
+        expect(result.event.rescuedSlots).toEqual([]);
+        expect(result.state.rescuesUsed).toBe(0);
+        expect(result.state.tray[1]!.shapeId).toBe("bar2-h");
     });
 
     it("revives once by clearing the most crowded rows", () => {

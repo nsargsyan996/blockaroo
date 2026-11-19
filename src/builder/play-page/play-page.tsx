@@ -17,7 +17,7 @@ import {
     TBoardPreview,
     useDragShared,
 } from "@container";
-import { canRevive, cellIndex, getShape, LEVEL_COUNT, previewClears, starsFor } from "@engine";
+import { canRevive, cellIndex, getShape, hintsLeft, LEVEL_COUNT, previewClears, starsFor } from "@engine";
 import { useBoardLayout, useRewardedReady } from "@hooks";
 import { ads, haptic, playSound } from "@service";
 import { selectActiveGame, TLastMove, useGameStore } from "@store";
@@ -59,6 +59,8 @@ export const PlayPage = () => {
     const startLevel = useGameStore((state) => state.startLevel);
     const place = useGameStore((state) => state.place);
     const reviveGame = useGameStore((state) => state.revive);
+    const hint = useGameStore((state) => state.hint);
+    const askHint = useGameStore((state) => state.askHint);
     const rewardedReady = useRewardedReady();
 
     const rootRef = useRef<ComponentRef<typeof View>>(null);
@@ -66,7 +68,6 @@ export const PlayPage = () => {
     const slotRef = useRef(-1);
     const targetRef = useRef<{ row: number; col: number } | null>(null);
     const overBoardRef = useRef(false);
-    const [activeSlot, setActiveSlot] = useState(-1);
     const [preview, setPreview] = useState<TBoardPreview | null>(null);
     const [result, setResult] = useState<TResult>("none");
     const [reviving, setReviving] = useState(false);
@@ -102,7 +103,6 @@ export const PlayPage = () => {
             slotRef.current = slot;
             targetRef.current = null;
             overBoardRef.current = false;
-            setActiveSlot(slot);
             playSound("pickup");
             haptic("pickup");
             measure();
@@ -135,9 +135,14 @@ export const PlayPage = () => {
         (slot: number) => {
             const target = targetRef.current;
             targetRef.current = null;
-            slotRef.current = -1;
-            setActiveSlot(-1);
-            setPreview(null);
+            // A newer pick-up may already be under way when this runs; leave its state alone.
+            if (slotRef.current === slot) {
+                slotRef.current = -1;
+                setPreview(null);
+            }
+            const move = target ? place(slot, target.row, target.col) : null;
+            // The tray copy of the piece was kept hidden until now, so a placed piece never flashes back into the tray.
+            drag.dropped.set(drag.dropped.get() & ~(1 << slot));
             if (!target) {
                 if (overBoardRef.current) {
                     playSound("invalid");
@@ -145,7 +150,6 @@ export const PlayPage = () => {
                 }
                 return;
             }
-            const move = place(slot, target.row, target.col);
             if (!move) return;
             moveFeedback(move);
             if (move.won || move.gameOver) {
@@ -158,7 +162,7 @@ export const PlayPage = () => {
                 }, GAME_CONFIG.gameOverDelayMs);
             }
         },
-        [place]
+        [place, drag]
     );
 
     const onRevive = useCallback(async () => {
@@ -224,12 +228,23 @@ export const PlayPage = () => {
         () => (lastMove ? { id: lastMove.id, cells: lastMove.placedCells, color: lastMove.pieceColor } : null),
         [lastMove]
     );
-    const activePiece = game && activeSlot >= 0 ? game.tray[activeSlot] : null;
+    const hintPiece = game && hint ? game.tray[hint.slot] : null;
+    const boardHint = useMemo(
+        () => (hint && hintPiece ? { cells: hint.cells, color: hintPiece.color } : null),
+        [hint, hintPiece]
+    );
     const adventure = game?.adventure ?? null;
 
     const hud = game ? (
         <View className="w-full gap-2">
-            <GameHud score={game.score} best={best} levelId={adventure?.levelId} onHome={leave} />
+            <GameHud
+                score={game.score}
+                best={best}
+                levelId={adventure?.levelId}
+                hintsLeft={game.status === "playing" ? hintsLeft(game) : 0}
+                onHint={askHint}
+                onHome={leave}
+            />
             <GoalsBar game={game} />
         </View>
     ) : null;
@@ -241,6 +256,7 @@ export const PlayPage = () => {
                 gems={game.gems}
                 layout={layout}
                 preview={preview}
+                hint={boardHint}
                 landed={landed}
                 burst={burst}
                 onLayout={measure}
@@ -254,7 +270,7 @@ export const PlayPage = () => {
             board={game.board}
             layout={layout}
             drag={drag}
-            activeSlot={activeSlot}
+            hintSlot={boardHint ? hint!.slot : -1}
             disabled={game.status !== "playing"}
             onPickUp={onPickUp}
             onHover={onHover}
@@ -289,7 +305,7 @@ export const PlayPage = () => {
                         </>
                     )
                 ) : null}
-                <DragLayer piece={activePiece} layout={layout} drag={drag} />
+                {game ? <DragLayer tray={game.tray} layout={layout} drag={drag} /> : null}
                 {game && result === "over" ? (
                     <GameOverCard
                         game={game}

@@ -5,11 +5,12 @@ import {
     COLOR_COUNT,
     GAME_STATE_VERSION,
     GEM_TYPES,
+    MAX_RESCUES,
     MAX_REVIVES,
     REVIVE_ROWS_CLEARED,
     TRAY_SIZE,
 } from "./constants";
-import { dealShapes, TDealOptions } from "./dealer";
+import { dealShapes, rescueShapes, TDealOptions } from "./dealer";
 import {
     TAdventureState,
     TBoard,
@@ -40,10 +41,15 @@ const dealTray = (
     return { tray, nextUid: uid };
 };
 
-const dealOptions = (state: Pick<TGameState, "score" | "adventure">, friendly = false): TDealOptions => ({
+const dealOptions = (
+    state: Pick<TGameState, "score" | "adventure" | "gems" | "movesSinceClear">,
+    friendly = false
+): TDealOptions => ({
     score: state.score,
     difficulty: state.adventure?.difficulty,
     friendly,
+    gems: state.adventure ? state.gems : undefined,
+    drought: state.movesSinceClear,
 });
 
 /** True when no piece left in the tray fits anywhere. */
@@ -85,7 +91,11 @@ export const createAdventureGame = (level: TLevel, seed: number = randomSeed()):
         par: level.par,
         difficulty: level.difficulty,
     };
-    const { tray, nextUid } = dealTray(level.board, rng, 1, { score: 0, difficulty: level.difficulty });
+    const { tray, nextUid } = dealTray(level.board, rng, 1, {
+        score: 0,
+        difficulty: level.difficulty,
+        gems: level.gems,
+    });
     return {
         version: GAME_STATE_VERSION,
         mode: "adventure",
@@ -160,9 +170,33 @@ export const placePiece = (state: TGameState, slot: number, row: number, col: nu
 
     if (!won && tray.every((item) => item === null)) {
         const rng = createRng(rngState);
-        ({ tray, nextUid } = dealTray(placement.board, rng, nextUid, dealOptions({ score, adventure })));
+        ({ tray, nextUid } = dealTray(
+            placement.board,
+            rng,
+            nextUid,
+            dealOptions({ score, adventure, gems, movesSinceClear: streak.movesSinceClear })
+        ));
         rngState = rng.state();
         dealt = true;
+    }
+
+    // Leftover pieces that no longer fit are swapped for ones that do, a few times per game, so a half-empty board
+    // does not end the game.
+    let rescuesUsed = state.rescuesUsed ?? 0;
+    let rescuedSlots: number[] = [];
+    if (!won && rescuesUsed < MAX_RESCUES && isStuck(placement.board, tray)) {
+        const slots = tray.map((item, index) => (item ? index : -1)).filter((index) => index >= 0);
+        const rng = createRng(rngState);
+        const shapes = rescueShapes(placement.board, rng, slots.length, adventure ? gems : undefined);
+        if (shapes) {
+            tray = tray.slice();
+            slots.forEach((index, i) => {
+                tray[index] = { uid: nextUid++, shapeId: shapes[i].id, color: 1 + rng.int(COLOR_COUNT) };
+            });
+            rngState = rng.state();
+            rescuesUsed += 1;
+            rescuedSlots = slots;
+        }
     }
 
     const gameOver = !won && isStuck(placement.board, tray);
@@ -179,6 +213,7 @@ export const placePiece = (state: TGameState, slot: number, row: number, col: nu
             movesSinceClear: streak.movesSinceClear,
             linesCleared: state.linesCleared + lines,
             moves: state.moves + 1,
+            rescuesUsed,
             status: won ? "won" : gameOver ? "over" : "playing",
             rngState,
             nextUid,
@@ -193,6 +228,7 @@ export const placePiece = (state: TGameState, slot: number, row: number, col: nu
             combo: streak.combo,
             perfectClear,
             dealt,
+            rescuedSlots,
             gameOver,
             collectedGems,
             won,

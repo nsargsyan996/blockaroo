@@ -14,8 +14,13 @@ export const PERFECT_CLEAR_BONUS = 500;
 export const MAX_REVIVES = 1;
 export const REVIVE_ROWS_CLEARED = 3;
 
+/** Times per game a tray piece that no longer fits anywhere is swapped for one that does, instead of ending the game. */
+export const MAX_RESCUES = 2;
+/** Hints the player can ask for in one game. */
+export const HINTS_PER_GAME = 3;
+
 /** Score at which the classic dealer reaches its hardest mix. */
-export const DIFFICULTY_MAX_SCORE = 5000;
+export const DIFFICULTY_MAX_SCORE = 12000;
 
 /** Bumped whenever the saved game shape changes; older saves are discarded on load. */
 export const GAME_STATE_VERSION = 2;

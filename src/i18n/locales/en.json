@@ -24,6 +24,7 @@
         "levels": "Levels",
         "level": "Level {{level}}",
         "goals": "Goals",
+        "hint": "Hint, {{count}} left",
         "combo": "Combo x{{count}}",
         "praise": {
             "good": "Good!",

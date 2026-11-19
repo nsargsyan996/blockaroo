@@ -8,7 +8,7 @@ import { SHAPES } from "./shapes";
  * Adventure levels are generated from the level number, so they are identical on every device and need no data
  * file. Most levels hide gems inside the starting blocks and ask the player to collect them by clearing their lines;
  * every fifth level is a score challenge instead. Boards get fuller and pieces bigger as levels go on. The curves
- * flatten around level 60 and then creep up again, so later levels stay fresh without turning into a wall.
+ * flatten around level 60 and then creep up only a little, so later levels stay fresh without turning into a wall.
  */
 
 const SCORE_LEVEL_EVERY = 5;
@@ -18,17 +18,20 @@ const isScoreLevel = (id: number) => id % SCORE_LEVEL_EVERY === 0;
 /** How far past level 60 a level is; the late-game creep is keyed off this. */
 const late = (id: number) => Math.max(0, id - 60);
 
-/** Share of the board filled at the start: 0.36 by level 20, then up to 0.40 by level 100. */
-export const fillRatioFor = (id: number) => Math.min(0.36, 0.16 + 0.01 * id) + late(id) * 0.001;
+/** Share of the board filled at the start: 0.30 by level 20, then up to 0.32 by level 100. */
+export const fillRatioFor = (id: number) => Math.min(0.3, 0.14 + 0.008 * id) + late(id) * 0.0005;
 
-/** Gems to collect: 12 by level 27, then one more every ten levels past 60, up to 16. */
+/** Gems to collect: 10 by level 28, then one more every twenty levels past 60, up to 12. */
 export const gemCountFor = (id: number) =>
-    Math.min(12, 3 + Math.floor(id / 3)) + Math.min(4, Math.floor(late(id) / 10));
+    Math.min(10, 3 + Math.floor(id / 4)) + Math.min(2, Math.floor(late(id) / 20));
 
 export const gemTypesFor = (id: number) => (id < 4 ? 1 : id < 12 ? 2 : 3);
 
-/** Dealer difficulty: 0.85 by level 52, then up to the classic-mode maximum of 1 by level 100. */
-export const difficultyForLevel = (id: number) => Math.min(0.85, (id - 1) / 60) + Math.min(0.15, late(id) * 0.00375);
+/** Dealer difficulty: 0.6 by level 49, then up to 0.75 by level 100. Adventure never reaches the classic maximum. */
+export const difficultyForLevel = (id: number) => Math.min(0.6, (id - 1) / 80) + Math.min(0.15, late(id) * 0.00375);
+
+/** Points to reach on a score level. */
+export const scoreTargetFor = (id: number) => 400 + id * 60;
 
 /** Builds a starting board by dropping small pieces at random spots, mirrored on even levels for a tidy look. */
 const buildBoard = (id: number, fillRatio: number) => {
@@ -73,7 +76,7 @@ export const buildLevel = (id: number): TLevel => {
     const difficulty = difficultyForLevel(id);
 
     if (scoreLevel) {
-        const target = 600 + id * 90;
+        const target = scoreTargetFor(id);
         return { id, board, gems, goals: [{ kind: "score", target }], par: Math.ceil(target / 110), difficulty };
     }
 

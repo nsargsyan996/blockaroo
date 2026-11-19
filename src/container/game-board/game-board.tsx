@@ -31,11 +31,18 @@ export interface TBoardBurst {
     big: boolean;
 }
 
+/** Where the current hint wants its piece. */
+export interface TBoardHint {
+    cells: number[];
+    color: number;
+}
+
 export interface GameBoardProps {
     board: TBoard;
     gems: TGem[];
     layout: TBoardLayout;
     preview: TBoardPreview | null;
+    hint: TBoardHint | null;
     /** Cells where a piece just landed, with an id that changes per move. */
     landed: { id: number; cells: number[]; color: number } | null;
     burst: TBoardBurst | null;
@@ -47,7 +54,7 @@ const BORDER = 3;
 
 export const GameBoard = memo(
     forwardRef<ComponentRef<typeof View>, GameBoardProps>(function GameBoard(
-        { board, gems, layout, preview, landed, burst, onLayout },
+        { board, gems, layout, preview, hint, landed, burst, onLayout },
         ref
     ) {
         const { boardSize, pitch, cellSize, padding, gap } = layout;
@@ -58,6 +65,7 @@ export const GameBoard = memo(
 
         const ghost = useMemo(() => (preview ? new Set(preview.cells) : EMPTY), [preview]);
         const highlight = useMemo(() => (preview ? new Set(preview.clearCells) : EMPTY), [preview]);
+        const hinted = useMemo(() => (hint ? new Set(hint.cells) : EMPTY), [hint]);
         const landedCells = useMemo(() => new Set(landed?.cells ?? []), [landed]);
 
         useEffect(() => {
@@ -114,6 +122,7 @@ export const GameBoard = memo(
                             ghostColor={preview && ghost.has(index) ? preview.color : 0}
                             // Cells in a line that would clear light up in the dragged piece's color.
                             highlightColor={preview && highlight.has(index) ? preview.color : 0}
+                            hintColor={hint && hinted.has(index) ? hint.color : 0}
                             popId={landed && landedCells.has(index) ? landed.id : 0}
                             size={cellSize}
                             left={inset + (index % BOARD_SIZE) * pitch}

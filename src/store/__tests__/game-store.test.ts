@@ -1,4 +1,4 @@
-import { findPlacements, getShape, LEVEL_COUNT } from "@engine";
+import { findPlacements, getShape, HINTS_PER_GAME, hintsLeft, LEVEL_COUNT } from "@engine";
 
 import { selectActiveGame, selectCanContinueClassic, selectTotalStars, useGameStore } from "../game-store";
 import { useSettingsStore } from "../settings-store";
@@ -20,6 +20,7 @@ const reset = () =>
         gamesFinished: 0,
         progress: { unlocked: 1, stars: {} },
         lastMove: null,
+        hint: null,
     });
 
 describe("game store: classic", () => {
@@ -67,6 +68,23 @@ describe("game store: classic", () => {
         expect(useGameStore.getState().classic!.status).toBe("playing");
         expect(useGameStore.getState().gamesFinished).toBe(0);
         expect(useGameStore.getState().revive()).toBe(false);
+    });
+
+    it("shows one hint at a time and spends it", () => {
+        expect(useGameStore.getState().askHint()).toBe(false);
+        useGameStore.getState().startClassic(5);
+        expect(useGameStore.getState().askHint()).toBe(true);
+        const { hint, classic } = useGameStore.getState();
+        expect(classic!.tray[hint!.slot]).not.toBeNull();
+        expect(hintsLeft(classic!)).toBe(HINTS_PER_GAME - 1);
+
+        // Asking again while the hint is on screen costs nothing.
+        expect(useGameStore.getState().askHint()).toBe(false);
+        expect(hintsLeft(useGameStore.getState().classic!)).toBe(HINTS_PER_GAME - 1);
+
+        // Following the hint clears it.
+        expect(useGameStore.getState().place(hint!.slot, hint!.row, hint!.col)).not.toBeNull();
+        expect(useGameStore.getState().hint).toBeNull();
     });
 
     it("switches back to a saved classic game", () => {

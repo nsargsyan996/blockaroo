@@ -73,6 +73,15 @@ export const CrownIcon = memo(function CrownIcon({ size = 22, color = palette.su
     );
 });
 
+export const BulbIcon = memo(function BulbIcon({ size = 26, color = palette.sun }: IconProps) {
+    return (
+        <Svg width={size} height={size} viewBox="0 0 24 24">
+            <Path d="M9 16.5c-2-1.3-3.5-3.5-3.5-6a6.5 6.5 0 0 1 13 0c0 2.5-1.5 4.7-3.5 6z" {...stroke(color)} />
+            <Path d="M9.5 20.5h5" {...stroke(color)} />
+        </Svg>
+    );
+});
+
 export const PlayIcon = memo(function PlayIcon({ size = 26, color = palette.text }: IconProps) {
     return (
         <Svg width={size} height={size} viewBox="0 0 24 24">

@@ -12,5 +12,5 @@ export const GAME_CONFIG = {
     dragLiftCells: 1.4,
     /** A drop this close (in cells) to a valid spot snaps into it, which forgives slightly-off drops. */
     snapTolerance: 0.7,
-    gameOverDelayMs: 700,
+    gameOverDelayMs: 500,
 } as const;

@@ -7,6 +7,11 @@ export interface TDragShared {
     y: SharedValue<number>;
     /** Tray slot being dragged, or -1. */
     slot: SharedValue<number>;
+    /**
+     * Bit mask of tray slots whose piece was just let go. A slot's tray copy stays hidden until its drop has been
+     * handled, so a placed piece never flashes back into the tray.
+     */
+    dropped: SharedValue<number>;
     /** 0 = drawn at tray size, 1 = drawn at board size. */
     grow: SharedValue<number>;
     /** Top-left of the board grid in window coordinates. */

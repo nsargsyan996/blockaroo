@@ -1,7 +1,19 @@
 import { boardFromArt } from "@test-utils";
 
 import { createBoard } from "../board";
-import { canPlaceAll, dealShapes, difficultyFor, helpChance, helpfulShapes, tierWeights } from "../dealer";
+import { CELL_COUNT } from "../constants";
+import {
+    canPlaceAll,
+    crowding,
+    dealShapes,
+    difficultyFor,
+    DROUGHT_MOVES,
+    helpChance,
+    helpfulShapes,
+    helpValue,
+    rescueShapes,
+    tierWeights,
+} from "../dealer";
 import { createRng } from "../rng";
 import { getShape, SHAPES } from "../shapes";
 
@@ -88,5 +100,89 @@ describe("dealer", () => {
         const shapes = dealShapes(full, createRng(3), { score: 0 });
         expect(shapes).toHaveLength(3);
         expect(SHAPES).toEqual(expect.arrayContaining(shapes));
+    });
+
+    it("values pieces that clear a gem line above other line clears", () => {
+        const board = boardFromArt([
+            "#######.",
+            "........",
+            "........",
+            "........",
+            "........",
+            "........",
+            "........",
+            ".#######",
+        ]);
+        const gems = new Array<number>(CELL_COUNT).fill(0);
+        gems[0] = 1;
+        expect(helpValue(board, getShape("square2"))).toBe(0);
+        expect(helpValue(board, getShape("dot"))).toBe(1);
+        // The dot can finish either row; with a gem in row 0 that row is worth more.
+        expect(helpValue(board, getShape("dot"), gems)).toBe(4);
+    });
+
+    it("measures how crowded the board is", () => {
+        expect(crowding(createBoard())).toBe(0);
+        expect(crowding(boardFromArt(CROWDED))).toBe(1);
+    });
+
+    it("always deals a line-clearing piece after a run of moves without a clear", () => {
+        const board = boardFromArt([
+            "#######.",
+            "........",
+            "........",
+            "........",
+            "........",
+            "........",
+            "........",
+            "........",
+        ]);
+        for (let seed = 0; seed < 50; seed++) {
+            const shapes = dealShapes(board, createRng(seed), { score: 0, difficulty: 1, drought: DROUGHT_MOVES });
+            expect(shapes.some((shape) => helpValue(board, shape) > 0)).toBe(true);
+        }
+    });
+
+    it("deals smaller pieces on a crowded board than on an open one", () => {
+        const half = boardFromArt([
+            "#.#.#.#.",
+            ".#.#.#.#",
+            "#.#.#.#.",
+            ".#.#.#.#",
+            "........",
+            "........",
+            "........",
+            "........",
+        ]);
+        const packed = boardFromArt([
+            "##.##.##",
+            "##.##.##",
+            "........",
+            "##.##.##",
+            "##.##.##",
+            "........",
+            "##.##.##",
+            "........",
+        ]);
+        expect(crowding(packed)).toBeGreaterThan(crowding(half));
+        const cells = (board: number[]) => {
+            let total = 0;
+            for (let seed = 0; seed < 200; seed++) {
+                for (const shape of dealShapes(board, createRng(seed), { score: 0, difficulty: 1 }))
+                    total += shape.size;
+            }
+            return total;
+        };
+        expect(cells(packed)).toBeLessThan(cells(createBoard()));
+    });
+
+    it("finds replacements that fit for stuck pieces", () => {
+        const board = boardFromArt(CROWDED);
+        for (let seed = 0; seed < 20; seed++) {
+            const shapes = rescueShapes(board, createRng(seed), 2)!;
+            expect(shapes).toHaveLength(2);
+            expect(canPlaceAll(board, shapes)).toBe(true);
+        }
+        expect(rescueShapes(boardFromArt(new Array(8).fill("########")), createRng(1), 1)).toBeNull();
     });
 });
