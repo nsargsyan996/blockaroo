@@ -14,7 +14,19 @@ const render = (svg, width, out) => {
     console.log(`assets/images/${out} (${width}px)`);
 };
 
+// Android clips the splash icon to a circle ⅔ of the image wide, so its splash shrinks the art into that circle.
+const insetSplash = (svg, scale) => {
+    const size = 1200 * scale;
+    const offset = (1200 - size) / 2;
+    const inner = svg.replace(
+        'width="1200" height="1200"',
+        `x="${offset}" y="${offset}" width="${size}" height="${size}"`
+    );
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">${inner}</svg>`;
+};
+
 render(brand("icon.svg"), 1024, "icon.png");
 render(brand("adaptive-icon.svg"), 1024, "adaptive-icon.png");
 render(brand("splash.svg"), 1200, "splash-icon.png");
+render(insetSplash(brand("splash.svg"), 0.56), 1200, "splash-icon-android.png");
 render(brand("icon.svg"), 196, "favicon.png");

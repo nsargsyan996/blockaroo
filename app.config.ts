@@ -80,6 +80,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
                 imageWidth: 300,
                 resizeMode: "contain",
                 backgroundColor: "#1438B8",
+                // Android clips the splash to a circle; this copy keeps Roo and the logo inside it.
+                android: {
+                    image: "./assets/images/splash-icon-android.png",
+                    imageWidth: 340,
+                },
             },
         ],
         [
