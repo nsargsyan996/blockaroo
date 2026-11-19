@@ -27,3 +27,6 @@ expo-env.d.ts
 *.keystore
 google-services.json
 GoogleService-Info.plist
+
+# JetBrains IDE settings
+.idea/

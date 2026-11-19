@@ -1,14 +1,25 @@
-# Hoppy Blocks: Art Kit v4
+# Hoppy Blocks: Art Kit v5
 
 All artwork was made from scratch as vector shapes. No stock assets, traced images or references to other games were
 used.
+
+## New in v5: store screenshots + Google Play set
+
+- `9_store_screenshots/`: 5 marketing screenshots made from real gameplay captures, built as one continuous strip.
+    - `iphone_1206x2622_*`: for App Store Connect, "iPhone with Dynamic Island (medium display)".
+    - `android_1080x1920_*`: for Google Play phone screenshots.
+    - Headlines stay within the top 17% of each image (Google's limit is 20%). The status bar is cropped off.
+- `10_google_play/`:
+    - `feature_graphic_1024x500.png`: real game board, Roo and the logo. No device frame, no call to action, 24-bit, no
+      alpha.
+    - `play_icon_512.png`: the Play Store icon. Google rounds the corners itself.
+- Generators: `shots2.py` makes the screenshots and `play.py` makes the Play feature graphic and icon.
 
 ## New in v4: App Store product page header (iOS 27+)
 
 Folder 8_app_store_header:
 
-- `header_3840x1646.png` (in `app-store-header/`): upload this in App Store Connect under **Header and Search Results →
-  Header**.
+- `header_3840x1646.png`: upload this in App Store Connect under **Header and Search Results → Header**.
     - 21:9, no transparency.
     - Roo and the logo sit inside Apple's art safe area (1646 × 661 at x 1097, y 493).
 - `universal_5244x2950.png`: optional. One PNG for both the header and the search card. Roo and the logo sit inside
