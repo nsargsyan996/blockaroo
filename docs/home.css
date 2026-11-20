@@ -35,6 +35,11 @@ html {
     scroll-behavior: smooth;
 }
 
+/* menu links land below the sticky nav bar, not under it */
+section[id] {
+    scroll-margin-top: 72px;
+}
+
 body {
     margin: 0;
     color: var(--text);
