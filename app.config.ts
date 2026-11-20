@@ -33,7 +33,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     orientation: "portrait",
     icon: "./assets/images/icon.png",
     userInterfaceStyle: "dark",
-    backgroundColor: "#1438B8",
+    backgroundColor: "#0D1238",
     ios: {
         bundleIdentifier: BUNDLE_ID[APP_VARIANT],
         supportsTablet: false,
@@ -45,8 +45,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         package: BUNDLE_ID[APP_VARIANT],
         adaptiveIcon: {
             foregroundImage: "./assets/images/adaptive-icon.png",
-            // The art kit's adaptive background: a flat stage blue behind the full-body Roo.
-            backgroundColor: "#2B5BE0",
+            // Art kit v7: the night-blue stage behind the 3D block mark.
+            backgroundColor: "#0D1238",
         },
         // A kids' game has no reason to ask for the advertising ID; the ads SDK still works without it.
         blockedPermissions: ["com.google.android.gms.permission.AD_ID"],
@@ -79,8 +79,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
                 image: "./assets/images/splash-icon.png",
                 imageWidth: 300,
                 resizeMode: "contain",
-                backgroundColor: "#1438B8",
-                // Android clips the splash to a circle; this copy keeps Roo and the logo inside it.
+                backgroundColor: "#0D1238",
+                // Android clips the splash to a circle; this copy keeps the logo inside it.
                 android: {
                     image: "./assets/images/splash-icon-android.png",
                     imageWidth: 340,

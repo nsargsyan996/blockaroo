@@ -6,7 +6,7 @@ export const buttonFaceVariants = cva("flex-row items-center justify-center gap-
         variant: {
             primary: "bg-sun",
             success: "bg-leaf",
-            secondary: "border border-white/15 bg-white/10",
+            secondary: "border border-[#8C9BFF]/40 bg-[#3A44B8]/35",
         },
         size: {
             lg: "min-h-[64px] px-8",
@@ -24,7 +24,7 @@ export const buttonEdgeVariants = cva("rounded-2xl", {
         variant: {
             primary: "bg-sun-shade",
             success: "bg-leaf-shade",
-            secondary: "bg-white/5",
+            secondary: "bg-[#1A1F66]/80",
         },
     },
     defaultVariants: {

@@ -2,6 +2,7 @@ import { memo } from "react";
 import { View, ViewStyle } from "react-native";
 
 import { BLOCK_COLORS } from "@theme";
+import { LinearGradient } from "expo-linear-gradient";
 
 export interface BlockProps {
     /** 1-7, an index into BLOCK_COLORS. */
@@ -11,8 +12,8 @@ export interface BlockProps {
 }
 
 /**
- * One beveled jewel block, like a glossy plastic tile: a lit top-left bevel, a shaded bottom-right bevel, the flat
- * colored face between them and a small glint. Plain Views keep 64+ of them cheap to render.
+ * One beveled jewel block: a lit top-left bevel, a shaded bottom-right bevel, a gradient face between them (lighter at
+ * the top, deeper at the bottom) and a small glint. Plain Views plus one gradient keep 64+ of them cheap to render.
  */
 export const Block = memo(function Block({ color, size, style }: BlockProps) {
     const tone = BLOCK_COLORS[color] ?? BLOCK_COLORS[1];
@@ -37,7 +38,9 @@ export const Block = memo(function Block({ color, size, style }: BlockProps) {
                     backgroundColor: tone.shade,
                 }}
             />
-            <View
+            <LinearGradient
+                colors={[tone.top, tone.base, tone.bottom]}
+                locations={[0, 0.5, 1]}
                 style={{
                     position: "absolute",
                     left: bevel,
@@ -45,7 +48,6 @@ export const Block = memo(function Block({ color, size, style }: BlockProps) {
                     right: bevel,
                     bottom: bevel,
                     borderRadius: radius * 0.4,
-                    backgroundColor: tone.base,
                 }}
             />
             <View

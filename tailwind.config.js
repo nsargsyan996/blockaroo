@@ -10,7 +10,7 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                card: "#102A8F",
+                card: "#151D5C",
                 soft: "#B9CBFF",
                 ink: "#140F38",
                 sun: { DEFAULT: "#FFC83D", shade: "#D9991A" },

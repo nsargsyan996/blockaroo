@@ -32,7 +32,7 @@ const Grid = memo(function Grid() {
     );
 });
 
-/** The arcade stage behind every screen: royal blue, a faint grid and a bright spot high in the middle. */
+/** The stage behind every screen: deep night blue, a faint grid, an indigo glow high in the middle and a violet glow top right. */
 export const AppBackground = memo(function AppBackground({ children, pieces = false }: AppBackgroundProps) {
     return (
         <View className="flex-1 overflow-hidden" style={{ backgroundColor: palette.arcade.mid }}>
@@ -45,11 +45,17 @@ export const AppBackground = memo(function AppBackground({ children, pieces = fa
             <Svg pointerEvents="none" style={StyleSheet.absoluteFill} viewBox="0 0 100 100" preserveAspectRatio="none">
                 <Defs>
                     <RadialGradient id="spot" cx="50%" cy="34%" r="45%">
-                        <Stop offset="0" stopColor={palette.arcade.spot} stopOpacity="0.55" />
+                        <Stop offset="0" stopColor={palette.arcade.spot} stopOpacity="0.5" />
+                        <Stop offset="0.5" stopColor={palette.arcade.spot} stopOpacity="0.16" />
                         <Stop offset="1" stopColor={palette.arcade.spot} stopOpacity="0" />
+                    </RadialGradient>
+                    <RadialGradient id="violet" cx="88%" cy="6%" r="55%">
+                        <Stop offset="0" stopColor={palette.arcade.violet} stopOpacity="0.28" />
+                        <Stop offset="1" stopColor={palette.arcade.violet} stopOpacity="0" />
                     </RadialGradient>
                 </Defs>
                 <Circle cx="50" cy="34" r="60" fill="url(#spot)" />
+                <Circle cx="88" cy="6" r="70" fill="url(#violet)" />
             </Svg>
             {pieces ? <FloatingPieces /> : null}
             {children}

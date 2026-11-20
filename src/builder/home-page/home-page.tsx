@@ -26,11 +26,18 @@ import { LANGUAGE_LABEL, nextLanguage, resolveLanguage } from "@i18n";
 import { playSound } from "@service/sound";
 import { selectCanContinueClassic, selectTotalStars, useGameStore, useSettingsStore } from "@store";
 import { palette } from "@theme";
-import { cn, formatScore } from "@util";
+import { formatScore } from "@util";
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 
 /** How far a mode card sinks onto its shaded edge when pressed: deeper than a button, it is a bigger block. */
 const CARD_DEPTH = 8;
+
+/** Jewel cards matching the level tiles: gold for Classic, indigo-violet for Adventure. */
+const CARD_STYLE = {
+    sun: { colors: ["#FFE88A", "#FFC23A", "#F59A12"], edge: "#B8620C", rim: "rgba(255,246,200,0.9)" },
+    amethyst: { colors: ["#8C7BFF", "#6A4FF0", "#4A2FC8"], edge: "#2A1A86", rim: "rgba(200,190,255,0.55)" },
+} as const;
 
 /**
  * One orchestrated entrance: the wordmark pops in over the bright spot, then the mode cards rise one after the
@@ -73,18 +80,22 @@ const ModeCard = memo(function ModeCard({ title, width, art, stat, cta, accent, 
             style={{ paddingBottom: CARD_DEPTH }}
         >
             <View
-                className={cn("absolute inset-x-0 bottom-0 rounded-3xl", sun ? "bg-sun-shade" : "bg-amethyst-shade")}
-                style={{ top: CARD_DEPTH }}
+                className="absolute inset-x-0 bottom-0 rounded-3xl"
+                style={{ top: CARD_DEPTH, backgroundColor: CARD_STYLE[accent].edge }}
             />
             <Animated.View style={faceStyle}>
                 <View
-                    className={cn(
-                        "min-h-[92px] flex-row items-center gap-3 overflow-hidden rounded-3xl px-3 py-3",
-                        sun ? "bg-sun" : "bg-amethyst"
-                    )}
+                    className="min-h-[92px] flex-row items-center gap-3 overflow-hidden rounded-3xl px-3 py-3"
+                    style={{ borderWidth: 1.5, borderColor: CARD_STYLE[accent].rim }}
                 >
-                    {/* The glossy upper half, the same sheen as the blocks and the wordmark. */}
-                    <View pointerEvents="none" className="absolute inset-x-0 top-0 h-1/2 bg-white/25" />
+                    <LinearGradient
+                        pointerEvents="none"
+                        colors={CARD_STYLE[accent].colors}
+                        locations={[0, 0.5, 1]}
+                        style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
+                    />
+                    {/* The glossy upper band, the same sheen as the level tiles. */}
+                    <View pointerEvents="none" className="absolute inset-x-2 top-1 h-[26%] rounded-2xl bg-white/15" />
                     <View className="h-14 w-14 items-center justify-center rounded-2xl bg-ink/15">{art}</View>
                     <View className="flex-1 gap-0.5">
                         <Typography
