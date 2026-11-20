@@ -73,9 +73,17 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
             "expo-build-properties",
             {
                 android: {
-                    // R8 strips classes that libraries load by reflection (WorkManager's WorkDatabase_Impl, pulled in
-                    // by the ads SDK), which crashed every release build on launch.
-                    enableMinifyInReleaseBuilds: false,
+                    // R8 roughly halves the app's code. It once crashed every release build on launch by stripping
+                    // classes that libraries load by reflection: WorkManager's WorkDatabase_Impl, a Room database
+                    // pulled in by the ads SDK. The rules below keep those generated classes.
+                    enableMinifyInReleaseBuilds: true,
+                    enableShrinkResourcesInReleaseBuilds: true,
+                    extraProguardRules: [
+                        "-keep class * extends androidx.room.RoomDatabase { <init>(); }",
+                        "-keep class androidx.work.impl.** { *; }",
+                        "-keep class androidx.startup.** { *; }",
+                        "-keep class * implements androidx.startup.Initializer { <init>(); }",
+                    ].join("\n"),
                 },
             },
         ],
