@@ -4,9 +4,11 @@ import {
     CELL_COUNT,
     COLOR_COUNT,
     GAME_STATE_VERSION,
+    GEM_BLOCK_COLORS,
     GEM_TYPES,
     MAX_RESCUES,
     MAX_REVIVES,
+    PIECE_GEM_CHANCE,
     REVIVE_ROWS_CLEARED,
     ROTATIONS_PER_GAME,
     TRAY_SIZE,
@@ -20,6 +22,8 @@ import {
     TLevel,
     TLevelGoal,
     TMoveResult,
+    TOffset,
+    TPiece,
     TReviveResult,
     TTray,
 } from "./engine.type";
@@ -27,18 +31,33 @@ import { createRng, randomSeed, TRng } from "./rng";
 import { movePoints, nextStreak } from "./scoring";
 import { getShape, isRotationSymmetric, rotatedShapeId, shapeTurns } from "./shapes";
 
+/** Adventure: the gem types whose goals are not met yet. Pieces only carry gems the level still asks for. */
+export const neededGems = (adventure: TAdventureState | null | undefined): TGem[] =>
+    adventure
+        ? adventure.goals.flatMap((goal) =>
+              goal.kind === "gems" && adventure.collected[goal.gem] < goal.count ? [goal.gem] : []
+          )
+        : [];
+
 const dealTray = (
     board: TBoard,
     rng: TRng,
     nextUid: number,
-    options: TDealOptions
+    options: TDealOptions,
+    /** Adventure: gem types a new piece may carry. Empty in classic and once every gem goal is met. */
+    gemPool: TGem[] = []
 ): { tray: TTray; nextUid: number } => {
     let uid = nextUid;
-    const tray = dealShapes(board, rng, options).map((shape) => ({
-        uid: uid++,
-        shapeId: shape.id,
-        color: 1 + rng.int(COLOR_COUNT),
-    }));
+    const tray = dealShapes(board, rng, options).map((shape): TPiece => {
+        const piece: TPiece = { uid: uid++, shapeId: shape.id, color: 1 + rng.int(COLOR_COUNT) };
+        if (gemPool.length > 0 && rng.next() < PIECE_GEM_CHANCE) {
+            const gem = gemPool[rng.int(gemPool.length)];
+            // Same look as the gem blocks a level starts with: the block color follows the gem.
+            piece.color = GEM_BLOCK_COLORS[gem];
+            piece.gem = { gem, cell: shape.cells[rng.int(shape.cells.length)] };
+        }
+        return piece;
+    });
     return { tray, nextUid: uid };
 };
 
@@ -81,8 +100,13 @@ export const canRotatePiece = (state: TGameState, slot: number) => {
 export const rotatePiece = (state: TGameState, slot: number): TGameState | null => {
     if (!canRotatePiece(state, slot)) return null;
     const piece = state.tray[slot]!;
+    const rows = getShape(piece.shapeId).rows;
+    // The gem turns with the piece, the same quarter turn as its cells (see rotatedShapeId).
+    const gem = piece.gem
+        ? { ...piece.gem, cell: [piece.gem.cell[1], rows - 1 - piece.gem.cell[0]] as TOffset }
+        : undefined;
     const tray = state.tray.map((item, index) =>
-        index === slot ? { ...piece, shapeId: rotatedShapeId(piece.shapeId) } : item
+        index === slot ? { ...piece, shapeId: rotatedShapeId(piece.shapeId), ...(gem ? { gem } : {}) } : item
     );
     return { ...state, tray, rotationsUsed: (state.rotationsUsed ?? 0) + 1 };
 };
@@ -122,11 +146,13 @@ export const createAdventureGame = (level: TLevel, seed: number = randomSeed()):
         par: level.par,
         difficulty: level.difficulty,
     };
-    const { tray, nextUid } = dealTray(level.board, rng, 1, {
-        score: 0,
-        difficulty: level.difficulty,
-        gems: level.gems,
-    });
+    const { tray, nextUid } = dealTray(
+        level.board,
+        rng,
+        1,
+        { score: 0, difficulty: level.difficulty, gems: level.gems },
+        neededGems(adventure)
+    );
     return {
         version: GAME_STATE_VERSION,
         mode: "adventure",
@@ -177,11 +203,14 @@ export const placePiece = (state: TGameState, slot: number, row: number, col: nu
     const points = movePoints({ cellsPlaced: shape.size, lines, combo: streak.combo, perfectClear });
     const score = state.score + points;
 
+    // A gem riding on the piece lands in its block; if that block's line clears right away, it is collected at once.
+    const gems = state.gems.slice();
+    if (piece.gem) gems[cellIndex(row + piece.gem.cell[0], col + piece.gem.cell[1])] = piece.gem.gem;
+
     // Gems inside cleared blocks are collected.
     const collectedGems = placement.clearedCells
-        .filter((index) => state.gems[index] > 0)
-        .map((index) => ({ index, gem: state.gems[index] }));
-    const gems = state.gems.slice();
+        .filter((index) => gems[index] > 0)
+        .map((index) => ({ index, gem: gems[index] }));
     let adventure = state.adventure;
     if (collectedGems.length > 0) {
         for (const { index } of collectedGems) gems[index] = 0;
@@ -205,7 +234,8 @@ export const placePiece = (state: TGameState, slot: number, row: number, col: nu
             placement.board,
             rng,
             nextUid,
-            dealOptions({ score, adventure, gems, movesSinceClear: streak.movesSinceClear })
+            dealOptions({ score, adventure, gems, movesSinceClear: streak.movesSinceClear }),
+            neededGems(adventure)
         ));
         rngState = rng.state();
         dealt = true;
@@ -294,7 +324,13 @@ export const revive = (state: TGameState): TReviveResult | null => {
     for (const index of clearedCells) board[index] = 0;
 
     const rng = createRng(state.rngState);
-    const { tray, nextUid } = dealTray(board, rng, state.nextUid, dealOptions(state, true));
+    const { tray, nextUid } = dealTray(
+        board,
+        rng,
+        state.nextUid,
+        dealOptions(state, true),
+        neededGems(state.adventure)
+    );
 
     return {
         state: {

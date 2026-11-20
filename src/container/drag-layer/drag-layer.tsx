@@ -43,7 +43,7 @@ const DragPiece = memo(function DragPiece({ piece, slot, layout, drag }: DragPie
 
     return (
         <Animated.View pointerEvents="none" style={[{ position: "absolute", left: 0, top: 0, width, height }, style]}>
-            <Piece shapeId={piece.shapeId} color={piece.color} pitch={pitch} gap={gap} />
+            <Piece shapeId={piece.shapeId} color={piece.color} pitch={pitch} gap={gap} gem={piece.gem} />
         </Animated.View>
     );
 });

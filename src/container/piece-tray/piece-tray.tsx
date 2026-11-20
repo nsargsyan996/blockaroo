@@ -179,7 +179,13 @@ const TraySlot = memo(function TraySlot(props: TraySlotProps) {
             >
                 {piece ? (
                     <Animated.View style={[style, { width: size.width, height: size.height }]}>
-                        <Piece shapeId={piece.shapeId} color={piece.color} pitch={trayPitch} gap={gap * 0.6} />
+                        <Piece
+                            shapeId={piece.shapeId}
+                            color={piece.color}
+                            pitch={trayPitch}
+                            gap={gap * 0.6}
+                            gem={piece.gem}
+                        />
                     </Animated.View>
                 ) : null}
                 {fitsTurned ? (

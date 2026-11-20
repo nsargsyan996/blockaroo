@@ -24,6 +24,14 @@ export interface TPiece {
     uid: number;
     shapeId: string;
     color: number;
+    /** Adventure: a gem riding on one block of the piece. Placing the piece drops it on the board. */
+    gem?: TPieceGem;
+}
+
+/** A gem inside one block of a tray piece: which gem, and which of the shape's cells holds it. */
+export interface TPieceGem {
+    gem: TGem;
+    cell: TOffset;
 }
 
 /** Always TRAY_SIZE slots; a slot is null once its piece has been placed. */
