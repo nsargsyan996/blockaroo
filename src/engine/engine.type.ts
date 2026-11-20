@@ -79,6 +79,8 @@ export interface TGameState {
     rescuesUsed?: number;
     /** Hints taken so far (see HINTS_PER_GAME). Missing in saves from before hints existed. */
     hintsUsed?: number;
+    /** Quarter turns given to tray pieces so far (see ROTATIONS_PER_GAME). Missing in saves from before rotation. */
+    rotationsUsed?: number;
     status: TGameStatus;
     rngState: number;
     nextUid: number;

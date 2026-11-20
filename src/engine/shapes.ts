@@ -1,6 +1,7 @@
 import { TOffset, TShape, TShapeTier } from "./engine.type";
 
-// Pieces never rotate, so every orientation is its own shape. "#" is a block, "." is a gap.
+// Every orientation is its own shape; rotating a piece swaps it for the next one (see rotatedShapeId).
+// "#" is a block, "." is a gap.
 const SHAPE_ART: { id: string; tier: TShapeTier; art: string[] }[] = [
     // Tier 1: small pieces that fit almost anywhere.
     { id: "dot", tier: 1, art: ["#"] },
@@ -71,4 +72,38 @@ export const getShape = (id: string): TShape => {
     const shape = SHAPES_BY_ID.get(id);
     if (!shape) throw new Error(`Unknown shape "${id}"`);
     return shape;
+};
+
+/** Cells as a stable string, so two shapes with the same cells match. */
+const cellKey = (cells: TOffset[]) =>
+    cells
+        .map(([row, col]) => `${row},${col}`)
+        .sort()
+        .join(" ");
+
+const SHAPES_BY_CELLS = new Map(SHAPES.map((shape) => [cellKey(shape.cells), shape]));
+
+/** A quarter turn clockwise: row r, col c of an R-row shape lands on row c, col R-1-r. */
+const ROTATED_ID = new Map(
+    SHAPES.map((shape) => {
+        const turned = SHAPES_BY_CELLS.get(cellKey(shape.cells.map(([row, col]) => [col, shape.rows - 1 - row])));
+        if (!turned) throw new Error(`Shape "${shape.id}" has no quarter-turned counterpart`);
+        return [shape.id, turned.id];
+    })
+);
+
+/** The shape a piece becomes after one quarter turn clockwise. */
+export const rotatedShapeId = (id: string): string => {
+    getShape(id);
+    return ROTATED_ID.get(id)!;
+};
+
+/** True for shapes that look the same after a quarter turn (dot, squares), so turning them does nothing. */
+export const isRotationSymmetric = (id: string) => rotatedShapeId(id) === id;
+
+/** The shape after each number of quarter turns, starting with 0 turns, without repeats: 1, 2 or 4 entries. */
+export const shapeTurns = (id: string): string[] => {
+    const turns = [id];
+    for (let next = rotatedShapeId(id); next !== id; next = rotatedShapeId(next)) turns.push(next);
+    return turns;
 };

@@ -23,7 +23,7 @@ describe("hint", () => {
             EMPTY_ROW,
         ]);
         const hint = findHint({ board, gems: noGems(), tray: trayOf("square2", "dot", null) })!;
-        expect(hint).toEqual({ slot: 1, row: 0, col: 7, cells: [7] });
+        expect(hint).toEqual({ slot: 1, row: 0, col: 7, cells: [7], turns: 0 });
     });
 
     it("prefers the line that holds a gem", () => {

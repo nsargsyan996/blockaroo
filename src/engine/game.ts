@@ -8,6 +8,7 @@ import {
     MAX_RESCUES,
     MAX_REVIVES,
     REVIVE_ROWS_CLEARED,
+    ROTATIONS_PER_GAME,
     TRAY_SIZE,
 } from "./constants";
 import { dealShapes, rescueShapes, TDealOptions } from "./dealer";
@@ -24,7 +25,7 @@ import {
 } from "./engine.type";
 import { createRng, randomSeed, TRng } from "./rng";
 import { movePoints, nextStreak } from "./scoring";
-import { getShape } from "./shapes";
+import { getShape, isRotationSymmetric, rotatedShapeId, shapeTurns } from "./shapes";
 
 const dealTray = (
     board: TBoard,
@@ -52,9 +53,39 @@ const dealOptions = (
     drought: state.movesSinceClear,
 });
 
-/** True when no piece left in the tray fits anywhere. */
-export const isStuck = (board: TBoard, tray: TTray) =>
-    tray.every((piece) => piece === null || !canFitAnywhere(board, getShape(piece.shapeId)));
+/** True when the piece fits somewhere as it is or after at most `turns` quarter turns. */
+export const canFitWithTurns = (board: TBoard, shapeId: string, turns: number) =>
+    shapeTurns(shapeId)
+        .slice(0, turns + 1)
+        .some((id) => canFitAnywhere(board, getShape(id)));
+
+/** True when no piece left in the tray fits anywhere, even after spending up to `turns` quarter turns on it. */
+export const isStuck = (board: TBoard, tray: TTray, turns = 0) =>
+    tray.every((piece) => piece === null || !canFitWithTurns(board, piece.shapeId, turns));
+
+export const rotationsLeft = (state: Pick<TGameState, "rotationsUsed">) =>
+    Math.max(0, ROTATIONS_PER_GAME - (state.rotationsUsed ?? 0));
+
+/** A piece can be turned while the game is on, turns are left, and turning would change it. */
+export const canRotatePiece = (state: TGameState, slot: number) => {
+    const piece = state.tray[slot];
+    return (
+        state.status === "playing" && piece != null && rotationsLeft(state) > 0 && !isRotationSymmetric(piece.shapeId)
+    );
+};
+
+/**
+ * Turns the piece in tray slot `slot` a quarter turn clockwise and spends one of the game's turns. It keeps its uid
+ * and color, and does not count as a move. Returns null when the piece can't be turned.
+ */
+export const rotatePiece = (state: TGameState, slot: number): TGameState | null => {
+    if (!canRotatePiece(state, slot)) return null;
+    const piece = state.tray[slot]!;
+    const tray = state.tray.map((item, index) =>
+        index === slot ? { ...piece, shapeId: rotatedShapeId(piece.shapeId) } : item
+    );
+    return { ...state, tray, rotationsUsed: (state.rotationsUsed ?? 0) + 1 };
+};
 
 const emptyGems = (): TGem[] => new Array<number>(CELL_COUNT).fill(0);
 
@@ -180,11 +211,12 @@ export const placePiece = (state: TGameState, slot: number, row: number, col: nu
         dealt = true;
     }
 
-    // Leftover pieces that no longer fit are swapped for ones that do, a few times per game, so a half-empty board
-    // does not end the game.
+    // Leftover pieces that no longer fit, even turned with the turns still left, are swapped for ones that do, a few
+    // times per game, so a half-empty board does not end the game.
+    const turns = rotationsLeft(state);
     let rescuesUsed = state.rescuesUsed ?? 0;
     let rescuedSlots: number[] = [];
-    if (!won && rescuesUsed < MAX_RESCUES && isStuck(placement.board, tray)) {
+    if (!won && rescuesUsed < MAX_RESCUES && isStuck(placement.board, tray, turns)) {
         const slots = tray.map((item, index) => (item ? index : -1)).filter((index) => index >= 0);
         const rng = createRng(rngState);
         const shapes = rescueShapes(placement.board, rng, slots.length, adventure ? gems : undefined);
@@ -199,7 +231,7 @@ export const placePiece = (state: TGameState, slot: number, row: number, col: nu
         }
     }
 
-    const gameOver = !won && isStuck(placement.board, tray);
+    const gameOver = !won && isStuck(placement.board, tray, turns);
 
     return {
         state: {
@@ -272,7 +304,7 @@ export const revive = (state: TGameState): TReviveResult | null => {
             combo: 0,
             movesSinceClear: 0,
             revivesUsed: state.revivesUsed + 1,
-            status: isStuck(board, tray) ? "over" : "playing",
+            status: isStuck(board, tray, rotationsLeft(state)) ? "over" : "playing",
             rngState: rng.state(),
             nextUid,
         },

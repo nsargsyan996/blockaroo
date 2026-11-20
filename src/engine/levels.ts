@@ -18,20 +18,20 @@ const isScoreLevel = (id: number) => id % SCORE_LEVEL_EVERY === 0;
 /** How far past level 60 a level is; the late-game creep is keyed off this. */
 const late = (id: number) => Math.max(0, id - 60);
 
-/** Share of the board filled at the start: 0.30 by level 20, then up to 0.32 by level 100. */
-export const fillRatioFor = (id: number) => Math.min(0.3, 0.14 + 0.008 * id) + late(id) * 0.0005;
+/** Share of the board filled at the start: 0.33 by level 20, then up to 0.35 by level 100. */
+export const fillRatioFor = (id: number) => Math.min(0.33, 0.15 + 0.009 * id) + late(id) * 0.0005;
 
-/** Gems to collect: 10 by level 28, then one more every twenty levels past 60, up to 12. */
+/** Gems to collect: 11 by level 28, then one more every twenty levels past 60, up to 13. */
 export const gemCountFor = (id: number) =>
-    Math.min(10, 3 + Math.floor(id / 4)) + Math.min(2, Math.floor(late(id) / 20));
+    Math.min(11, 4 + Math.floor(id / 4)) + Math.min(2, Math.floor(late(id) / 20));
 
 export const gemTypesFor = (id: number) => (id < 4 ? 1 : id < 12 ? 2 : 3);
 
-/** Dealer difficulty: 0.6 by level 49, then up to 0.75 by level 100. Adventure never reaches the classic maximum. */
-export const difficultyForLevel = (id: number) => Math.min(0.6, (id - 1) / 80) + Math.min(0.15, late(id) * 0.00375);
+/** Dealer difficulty: 0.65 by level 50, then up to 0.8 by level 100. Adventure never reaches the classic maximum. */
+export const difficultyForLevel = (id: number) => Math.min(0.65, (id - 1) / 75) + Math.min(0.15, late(id) * 0.00375);
 
 /** Points to reach on a score level. */
-export const scoreTargetFor = (id: number) => 400 + id * 60;
+export const scoreTargetFor = (id: number) => 450 + id * 65;
 
 /** Builds a starting board by dropping small pieces at random spots, mirrored on even levels for a tidy look. */
 const buildBoard = (id: number, fillRatio: number) => {

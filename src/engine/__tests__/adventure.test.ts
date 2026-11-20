@@ -171,16 +171,16 @@ describe("levels", () => {
         expect(gemTypesFor(1)).toBe(1);
         expect(gemTypesFor(20)).toBe(3);
         expect(difficultyForLevel(1)).toBe(0);
-        expect(difficultyForLevel(60)).toBeCloseTo(0.6);
+        expect(difficultyForLevel(60)).toBeCloseTo(0.65);
         expect(getLevel(5).goals[0].kind).toBe("score");
     });
 
     it("keeps creeping up past level 60 without ever easing off", () => {
-        expect(fillRatioFor(100)).toBeCloseTo(0.32);
-        expect(gemCountFor(100)).toBe(12);
-        expect(difficultyForLevel(100)).toBeCloseTo(0.75);
-        expect(scoreTargetFor(100)).toBe(6400);
-        expect(getLevel(100).goals).toEqual([{ kind: "score", target: 6400 }]);
+        expect(fillRatioFor(100)).toBeCloseTo(0.35);
+        expect(gemCountFor(100)).toBe(13);
+        expect(difficultyForLevel(100)).toBeCloseTo(0.8);
+        expect(scoreTargetFor(100)).toBe(6950);
+        expect(getLevel(100).goals).toEqual([{ kind: "score", target: 6950 }]);
         for (let id = 2; id <= LEVEL_COUNT; id++) {
             expect(fillRatioFor(id)).toBeGreaterThanOrEqual(fillRatioFor(id - 1));
             expect(gemCountFor(id)).toBeGreaterThanOrEqual(gemCountFor(id - 1));

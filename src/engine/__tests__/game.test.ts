@@ -4,6 +4,7 @@ import { findPlacements } from "../board";
 import { MAX_RESCUES, MAX_REVIVES, TRAY_SIZE } from "../constants";
 import { TGameState } from "../engine.type";
 import {
+    canFitWithTurns,
     canPlacePiece,
     canRevive,
     createGame,
@@ -12,6 +13,8 @@ import {
     placePiece,
     revive,
     reviveRows,
+    rotatePiece,
+    rotationsLeft,
 } from "../game";
 import { getShape } from "../shapes";
 
@@ -166,14 +169,21 @@ describe("game", () => {
     });
 
     it("plays hundreds of moves without dealing an impossible tray", () => {
-        // A simple bot that always picks the first legal move. Every fresh tray must have a legal move.
+        // A simple bot that always picks the first legal move, turning a piece only when nothing fits as it is.
+        // Every fresh tray must have a legal move without turning.
+        const fits = (state: TGameState) =>
+            state.tray.findIndex((piece) => piece && findPlacements(state.board, getShape(piece.shapeId)).length > 0);
         for (let seed = 1; seed <= 12; seed++) {
             let state = createGame(seed);
             let guard = 0;
             while (state.status === "playing" && guard++ < 400) {
-                const slot = state.tray.findIndex(
-                    (piece) => piece && findPlacements(state.board, getShape(piece.shapeId)).length > 0
-                );
+                if (fits(state) < 0) {
+                    const turnable = state.tray.findIndex(
+                        (piece) => piece && canFitWithTurns(state.board, piece.shapeId, rotationsLeft(state))
+                    );
+                    while (fits(state) < 0) state = rotatePiece(state, turnable)!;
+                }
+                const slot = fits(state);
                 expect(slot).toBeGreaterThanOrEqual(0);
                 const [row, col] = findPlacements(state.board, getShape(state.tray[slot]!.shapeId))[0];
                 const result = placePiece(state, slot, row, col)!;

@@ -15,7 +15,7 @@ const SEARCH_BUDGET = 1500;
 const DEAL_ATTEMPTS = 10;
 
 /** Board fill where the dealer starts easing off, and where it is at its most generous. */
-const CROWDED_FROM = 0.3;
+const CROWDED_FROM = 0.35;
 const CROWDED_FULL = 0.55;
 /** Placements without a clear after which the next deal always includes a line-clearing piece. */
 export const DROUGHT_MOVES = 3;
@@ -36,13 +36,13 @@ export interface TDealOptions {
 export const difficultyFor = (score: number) => Math.min(1, Math.max(0, score / DIFFICULTY_MAX_SCORE));
 
 export const tierWeights = (difficulty: number): Record<TShapeTier, number> => ({
-    1: 3.2 - 1.2 * difficulty,
+    1: 2.7 - 1.5 * difficulty,
     2: 3,
-    3: 0.5 + 1.1 * difficulty,
+    3: 1 + 2.6 * difficulty,
 });
 
 /** Chance that one piece of a deal is picked because it completes a line right now. */
-export const helpChance = (difficulty: number) => 0.55 - 0.25 * difficulty;
+export const helpChance = (difficulty: number) => 0.42 - 0.3 * difficulty;
 
 /** 0 while the board has plenty of room, 1 once it is crowded. */
 export const crowding = (board: TBoard) =>
@@ -99,7 +99,7 @@ export const dealShapes = (board: TBoard, rng: TRng, options: TDealOptions): TSh
     const { score, friendly = false, gems, drought = 0 } = options;
     const crowded = crowding(board);
     // A crowded board pulls the mix back toward small pieces, whatever the score or level says.
-    const difficulty = friendly ? 0 : (options.difficulty ?? difficultyFor(score)) * (1 - 0.7 * crowded);
+    const difficulty = friendly ? 0 : (options.difficulty ?? difficultyFor(score)) * (1 - 0.4 * crowded);
     const pool = friendly ? SHAPES.filter((shape) => shape.tier < 3) : SHAPES;
     const weights = tierWeights(difficulty);
 
