@@ -19,6 +19,7 @@ import {
     gemCountFor,
     gemTypesFor,
     getLevel,
+    scoreLevelGemsFor,
     scoreTargetFor,
 } from "../levels";
 
@@ -147,13 +148,13 @@ describe("levels", () => {
         for (let id = 1; id <= LEVEL_COUNT; id++) {
             const level = getLevel(id);
             expect(level.goals.length).toBeGreaterThan(0);
-            const gemTotal = level.gems.filter(Boolean).length;
+            // Every level has gems to collect, score challenges included.
+            expect(level.goals.some((goal) => goal.kind === "gems")).toBe(true);
             for (const goal of level.goals) {
                 if (goal.kind === "gems") {
                     expect(level.gems.filter((gem) => gem === goal.gem)).toHaveLength(goal.count);
                 } else {
                     expect(goal.target).toBeGreaterThan(0);
-                    expect(gemTotal).toBe(0);
                 }
             }
             level.gems.forEach((gem, index) => {
@@ -173,6 +174,11 @@ describe("levels", () => {
         expect(difficultyForLevel(1)).toBe(0);
         expect(difficultyForLevel(60)).toBeCloseTo(0.65);
         expect(getLevel(5).goals[0].kind).toBe("score");
+        expect(scoreLevelGemsFor(5)).toBe(3);
+        expect(scoreLevelGemsFor(100)).toBe(5);
+        const scoreLevelGems = (id: number) => getLevel(id).gems.filter(Boolean).length;
+        expect(scoreLevelGems(5)).toBe(3);
+        expect(scoreLevelGems(60)).toBe(4);
     });
 
     it("keeps creeping up past level 60 without ever easing off", () => {
@@ -180,7 +186,8 @@ describe("levels", () => {
         expect(gemCountFor(100)).toBe(13);
         expect(difficultyForLevel(100)).toBeCloseTo(0.8);
         expect(scoreTargetFor(100)).toBe(6950);
-        expect(getLevel(100).goals).toEqual([{ kind: "score", target: 6950 }]);
+        expect(getLevel(100).goals[0]).toEqual({ kind: "score", target: 6950 });
+        expect(getLevel(100).gems.filter(Boolean)).toHaveLength(5);
         for (let id = 2; id <= LEVEL_COUNT; id++) {
             expect(fillRatioFor(id)).toBeGreaterThanOrEqual(fillRatioFor(id - 1));
             expect(gemCountFor(id)).toBeGreaterThanOrEqual(gemCountFor(id - 1));

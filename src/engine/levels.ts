@@ -7,8 +7,9 @@ import { SHAPES } from "./shapes";
 /**
  * Adventure levels are generated from the level number, so they are identical on every device and need no data
  * file. Most levels hide gems inside the starting blocks and ask the player to collect them by clearing their lines;
- * every fifth level is a score challenge instead. Boards get fuller and pieces bigger as levels go on. The curves
- * flatten around level 60 and then creep up only a little, so later levels stay fresh without turning into a wall.
+ * every fifth level is a score challenge that also hides a few gems. Boards get fuller and pieces bigger as levels go
+ * on. The curves flatten around level 60 and then creep up only a little, so later levels stay fresh without turning
+ * into a wall.
  */
 
 const SCORE_LEVEL_EVERY = 5;
@@ -32,6 +33,9 @@ export const difficultyForLevel = (id: number) => Math.min(0.65, (id - 1) / 75) 
 
 /** Points to reach on a score level. */
 export const scoreTargetFor = (id: number) => 450 + id * 65;
+
+/** Gems a score level also hides: 3, then 4 from level 40 and 5 from level 80. Few enough to stay a side goal. */
+export const scoreLevelGemsFor = (id: number) => Math.min(5, 3 + Math.floor(id / 40));
 
 /** Builds a starting board by dropping small pieces at random spots, mirrored on even levels for a tidy look. */
 const buildBoard = (id: number, fillRatio: number) => {
@@ -75,14 +79,9 @@ export const buildLevel = (id: number): TLevel => {
     const gems: TGem[] = new Array<number>(board.length).fill(0);
     const difficulty = difficultyForLevel(id);
 
-    if (scoreLevel) {
-        const target = scoreTargetFor(id);
-        return { id, board, gems, goals: [{ kind: "score", target }], par: Math.ceil(target / 110), difficulty };
-    }
-
     const filledCells = board.map((cell, index) => (cell ? index : -1)).filter((index) => index >= 0);
     const types = gemTypesFor(id);
-    const count = Math.min(gemCountFor(id), filledCells.length);
+    const count = Math.min(scoreLevel ? scoreLevelGemsFor(id) : gemCountFor(id), filledCells.length);
     const counts = new Array<number>(types + 1).fill(0);
     // Gems favor crowded rows and columns, which are the ones a player can realistically finish.
     const lineFill = (index: number) => {
@@ -102,11 +101,23 @@ export const buildLevel = (id: number): TLevel => {
         counts[gem] += 1;
     }
 
-    const goals: TLevelGoal[] = counts
+    const gemGoals: TLevelGoal[] = counts
         .map((n, gem) => ({ kind: "gems" as const, gem, count: n }))
         .filter((goal) => goal.gem > 0 && goal.count > 0);
 
-    return { id, board, gems, goals, par: Math.ceil(8 + count * 1.8), difficulty };
+    if (scoreLevel) {
+        const target = scoreTargetFor(id);
+        return {
+            id,
+            board,
+            gems,
+            goals: [{ kind: "score", target }, ...gemGoals],
+            par: Math.ceil(target / 110) + count,
+            difficulty,
+        };
+    }
+
+    return { id, board, gems, goals: gemGoals, par: Math.ceil(8 + count * 1.8), difficulty };
 };
 
 const cache = new Map<number, TLevel>();
