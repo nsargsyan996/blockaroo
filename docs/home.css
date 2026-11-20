@@ -316,12 +316,16 @@ main,
         border-color 0.15s ease;
 }
 
-.store:hover {
+.store:not([href]) {
+    cursor: default;
+}
+
+.store[href]:hover {
     transform: translateY(-2px);
     border-color: var(--gold-2);
 }
 
-.store:active {
+.store[href]:active {
     transform: translateY(4px);
     box-shadow:
         0 2px 0 #070a22,
