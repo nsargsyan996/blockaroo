@@ -30,6 +30,8 @@ export interface TDealOptions {
     gems?: TGem[];
     /** Placements since the last line clear. */
     drought?: number;
+    /** Placements without a clear before a helper is guaranteed (DROUGHT_MOVES unless a mode sets its own). */
+    droughtMoves?: number;
 }
 
 /** 0 at the start of a game, 1 at DIFFICULTY_MAX_SCORE. */
@@ -96,7 +98,7 @@ const pickShapes = (rng: TRng, pool: TShape[], weights: Record<TShapeTier, numbe
     Array.from({ length: count }, () => pickWeighted(rng, pool, (shape) => weights[shape.tier]));
 
 export const dealShapes = (board: TBoard, rng: TRng, options: TDealOptions): TShape[] => {
-    const { score, friendly = false, gems, drought = 0 } = options;
+    const { score, friendly = false, gems, drought = 0, droughtMoves = DROUGHT_MOVES } = options;
     const crowded = crowding(board);
     // A crowded board pulls the mix back toward small pieces, whatever the score or level says.
     const difficulty = friendly ? 0 : (options.difficulty ?? difficultyFor(score)) * (1 - 0.4 * crowded);
@@ -106,7 +108,7 @@ export const dealShapes = (board: TBoard, rng: TRng, options: TDealOptions): TSh
     const helpers = pool
         .map((shape) => ({ shape, value: helpValue(board, shape, gems) }))
         .filter((helper) => helper.value > 0);
-    const rescue = drought >= DROUGHT_MOVES || crowded >= 1;
+    const rescue = drought >= droughtMoves || crowded >= 1;
     const chance = rescue ? 1 : helpChance(difficulty) + 0.4 * crowded;
     const pickHelper = () => pickWeighted(rng, helpers, (helper) => helper.value * helper.value).shape;
 

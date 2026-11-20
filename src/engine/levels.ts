@@ -22,14 +22,13 @@ const late = (id: number) => Math.max(0, id - 60);
 /** Share of the board filled at the start: 0.33 by level 20, then up to 0.35 by level 100. */
 export const fillRatioFor = (id: number) => Math.min(0.33, 0.15 + 0.009 * id) + late(id) * 0.0005;
 
-/** Gems to collect: 11 by level 28, then one more every twenty levels past 60, up to 13. */
-export const gemCountFor = (id: number) =>
-    Math.min(11, 4 + Math.floor(id / 4)) + Math.min(2, Math.floor(late(id) / 20));
+/** Gems to collect: 11 by level 28. Later levels get harder through tighter move limits, not more gems. */
+export const gemCountFor = (id: number) => Math.min(11, 4 + Math.floor(id / 4));
 
 export const gemTypesFor = (id: number) => (id < 4 ? 1 : id < 12 ? 2 : 3);
 
-/** Dealer difficulty: 0.65 by level 50, then up to 0.8 by level 100. Adventure never reaches the classic maximum. */
-export const difficultyForLevel = (id: number) => Math.min(0.65, (id - 1) / 75) + Math.min(0.15, late(id) * 0.00375);
+/** Dealer difficulty: 0.85 by level 46, then up to the classic maximum of 1 by level 100. */
+export const difficultyForLevel = (id: number) => Math.min(0.85, (id - 1) / 45) + Math.min(0.15, late(id) * 0.00375);
 
 /** Linear ramp from `from` at level `a` to `to` at level `b`, flat outside. */
 const ramp = (id: number, a: number, from: number, b: number, to: number) =>
@@ -43,11 +42,13 @@ const ramp = (id: number, a: number, from: number, b: number, to: number) =>
 export const moveLimitFactorFor = (id: number, scoreLevel: boolean) =>
     scoreLevel
         ? id <= 40
-            ? ramp(id, 10, 1.5, 40, 0.95)
-            : ramp(id, 40, 0.95, 100, 0.8)
+            ? ramp(id, 10, 1.5, 40, 0.85)
+            : ramp(id, 40, 0.85, 100, 0.72)
         : id <= 40
-          ? ramp(id, 10, 1.0, 40, 0.58)
-          : ramp(id, 40, 0.58, 100, 0.56);
+          ? ramp(id, 10, 1.0, 40, 0.5)
+          : ramp(id, 40, 0.5, 100, 0.48);
+
+const MIN_MOVES_PER_GEM = 1.5;
 
 /** Three stars take at most this share of the move limit. */
 const PAR_SHARE = 0.7;
@@ -140,7 +141,11 @@ export const buildLevel = (id: number): TLevel => {
         };
     }
 
-    const moveLimit = Math.ceil(Math.ceil(8 + count * 1.8) * moveLimitFactorFor(id, false));
+    // Never fewer than 1.5 moves a gem, so a level with gems spread thin is still winnable.
+    const moveLimit = Math.max(
+        Math.ceil(count * MIN_MOVES_PER_GEM),
+        Math.ceil(Math.ceil(8 + count * 1.8) * moveLimitFactorFor(id, false))
+    );
     return { id, board, gems, goals: gemGoals, par: Math.ceil(moveLimit * PAR_SHARE), moveLimit, difficulty };
 };
 

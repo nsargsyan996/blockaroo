@@ -1,5 +1,6 @@
 import { canFitAnywhere, canPlace, cellIndex, createBoard, isBoardEmpty, lineCells, placeShape } from "./board";
 import {
+    ADVENTURE_DROUGHT_MOVES,
     BOARD_SIZE,
     CELL_COUNT,
     COLOR_COUNT,
@@ -71,6 +72,7 @@ const dealOptions = (
     friendly,
     gems: state.adventure ? state.gems : undefined,
     drought: state.movesSinceClear,
+    droughtMoves: state.adventure ? ADVENTURE_DROUGHT_MOVES : undefined,
 });
 
 /** True when the piece fits somewhere as it is or after at most `turns` quarter turns. */

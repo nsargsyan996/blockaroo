@@ -220,7 +220,7 @@ describe("levels", () => {
 
     it("gives early levels room and tightens the move limit later", () => {
         expect(moveLimitFactorFor(1, false)).toBe(1);
-        expect(moveLimitFactorFor(40, false)).toBeCloseTo(0.58);
+        expect(moveLimitFactorFor(40, false)).toBeCloseTo(0.5);
         expect(moveLimitFactorFor(1, true)).toBe(1.5);
         for (let id = 2; id <= LEVEL_COUNT; id++) {
             expect(moveLimitFactorFor(id, false)).toBeLessThanOrEqual(moveLimitFactorFor(id - 1, false));
@@ -233,7 +233,7 @@ describe("levels", () => {
         expect(gemTypesFor(1)).toBe(1);
         expect(gemTypesFor(20)).toBe(3);
         expect(difficultyForLevel(1)).toBe(0);
-        expect(difficultyForLevel(60)).toBeCloseTo(0.65);
+        expect(difficultyForLevel(46)).toBeCloseTo(0.85);
         expect(getLevel(5).goals[0].kind).toBe("score");
         expect(scoreLevelGemsFor(5)).toBe(3);
         expect(scoreLevelGemsFor(100)).toBe(5);
@@ -244,8 +244,8 @@ describe("levels", () => {
 
     it("keeps creeping up past level 60 without ever easing off", () => {
         expect(fillRatioFor(100)).toBeCloseTo(0.35);
-        expect(gemCountFor(100)).toBe(13);
-        expect(difficultyForLevel(100)).toBeCloseTo(0.8);
+        expect(gemCountFor(100)).toBe(11);
+        expect(difficultyForLevel(100)).toBeCloseTo(1);
         expect(scoreTargetFor(100)).toBe(6950);
         expect(getLevel(100).goals[0]).toEqual({ kind: "score", target: 6950 });
         expect(getLevel(100).gems.filter(Boolean)).toHaveLength(5);
