@@ -14,6 +14,7 @@ const level = (): TLevel => ({
     gems: new Array<number>(CELL_COUNT).fill(0),
     goals: [{ kind: "gems", gem: 1, count: 1 }],
     par: 4,
+    moveLimit: 50,
     difficulty: 0,
 });
 

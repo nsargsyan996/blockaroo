@@ -8,6 +8,7 @@ import {
     goalProgress,
     isLevelComplete,
     isValidGameState,
+    movesLeft,
     placePiece,
     revive,
     starsFor,
@@ -19,6 +20,7 @@ import {
     gemCountFor,
     gemTypesFor,
     getLevel,
+    moveLimitFactorFor,
     scoreLevelGemsFor,
     scoreTargetFor,
 } from "../levels";
@@ -50,6 +52,7 @@ const tinyLevel = (): TLevel => {
             { kind: "gems", gem: 1, count: 1 },
         ],
         par: 4,
+        moveLimit: 50,
         difficulty: 0,
     };
 };
@@ -131,6 +134,52 @@ describe("adventure rules", () => {
         expect(starsFor(16, 10)).toBe(1);
     });
 
+    it("scales the 2-star band to the level's move limit", () => {
+        expect(starsFor(10, 10, 20)).toBe(3);
+        expect(starsFor(15, 10, 20)).toBe(2);
+        expect(starsFor(16, 10, 20)).toBe(1);
+    });
+
+    it("ends the level when its moves run out", () => {
+        const game = withDot(createAdventureGame(tinyLevel(), 1));
+        const lastMove = { ...game, adventure: { ...game.adventure!, moveLimit: 1 } };
+        expect(movesLeft(lastMove)).toBe(1);
+        const result = placePiece(lastMove, 0, 4, 4)!;
+        expect(result.event.won).toBe(false);
+        expect(result.event.gameOver).toBe(true);
+        expect(result.event.outOfMoves).toBe(true);
+        expect(result.state.status).toBe("over");
+        expect(movesLeft(result.state)).toBe(0);
+    });
+
+    it("still wins a level on its very last move", () => {
+        const game = withDot(createAdventureGame(tinyLevel(), 1));
+        const solo = {
+            ...game,
+            adventure: { ...game.adventure!, goals: [{ kind: "gems" as const, gem: 2, count: 1 }] },
+        };
+        const lastMove = { ...solo, adventure: { ...solo.adventure, moveLimit: 1 } };
+        const result = placePiece(lastMove, 0, 0, 7)!;
+        expect(result.event.won).toBe(true);
+        expect(result.event.outOfMoves).toBe(false);
+        expect(result.state.status).toBe("won");
+    });
+
+    it("gives a level that ran out of moves five more on a revive", () => {
+        const game = withDot(createAdventureGame(tinyLevel(), 1));
+        const over = placePiece({ ...game, adventure: { ...game.adventure!, moveLimit: 1 } }, 0, 4, 4)!.state;
+        const result = revive(over)!;
+        expect(result.state.status).toBe("playing");
+        expect(movesLeft(result.state)).toBe(5);
+    });
+
+    it("plays saves from before move limits without one", () => {
+        const game = createAdventureGame(tinyLevel(), 1);
+        const old = { ...game, adventure: { ...game.adventure!, moveLimit: undefined } };
+        expect(movesLeft(old)).toBeNull();
+        expect(placePiece(withDot(old), 0, 4, 4)!.event.outOfMoves).toBe(false);
+    });
+
     it("keeps classic saves free of gems", () => {
         expect(isValidGameState({ ...createAdventureGame(tinyLevel(), 1), adventure: null })).toBe(false);
     });
@@ -157,6 +206,8 @@ describe("levels", () => {
                     expect(goal.target).toBeGreaterThan(0);
                 }
             }
+            // Three stars are always reachable within the move limit.
+            expect(level.par).toBeLessThan(level.moveLimit);
             level.gems.forEach((gem, index) => {
                 if (gem) expect(level.board[index]).toBe(GEM_BLOCK_COLORS[gem]);
             });
@@ -164,6 +215,16 @@ describe("levels", () => {
                 expect(level.board.slice(i * 8, i * 8 + 8).every(Boolean)).toBe(false);
                 expect([0, 1, 2, 3, 4, 5, 6, 7].every((r) => level.board[r * 8 + i])).toBe(false);
             }
+        }
+    });
+
+    it("gives early levels room and tightens the move limit later", () => {
+        expect(moveLimitFactorFor(1, false)).toBe(1);
+        expect(moveLimitFactorFor(40, false)).toBeCloseTo(0.58);
+        expect(moveLimitFactorFor(1, true)).toBe(1.5);
+        for (let id = 2; id <= LEVEL_COUNT; id++) {
+            expect(moveLimitFactorFor(id, false)).toBeLessThanOrEqual(moveLimitFactorFor(id - 1, false));
+            expect(moveLimitFactorFor(id, true)).toBeLessThanOrEqual(moveLimitFactorFor(id - 1, true));
         }
     });
 

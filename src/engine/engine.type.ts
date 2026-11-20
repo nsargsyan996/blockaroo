@@ -53,6 +53,8 @@ export interface TLevel {
     goals: TLevelGoal[];
     /** Moves for three stars. */
     par: number;
+    /** Moves the level allows; running out ends the level. */
+    moveLimit: number;
     /** 0..1, feeds the dealer instead of the score. */
     difficulty: number;
 }
@@ -63,6 +65,8 @@ export interface TAdventureState {
     /** Gems collected so far, indexed by gem type (index 0 unused). */
     collected: number[];
     par: number;
+    /** Moves allowed before the level ends. Missing in saves from before move limits, which then have none. */
+    moveLimit?: number;
     difficulty: number;
 }
 
@@ -115,6 +119,8 @@ export interface TMoveEvent {
     /** Tray slots whose piece no longer fit anywhere and was swapped for one that does. */
     rescuedSlots: number[];
     gameOver: boolean;
+    /** Adventure: the game ended because the level's moves ran out. */
+    outOfMoves: boolean;
     collectedGems: { index: number; gem: TGem }[];
     /** Adventure: every goal of the level is met. */
     won: boolean;

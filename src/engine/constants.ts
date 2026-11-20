@@ -32,5 +32,7 @@ export const GEM_TYPES = 3;
 /** Block color used for the block that holds each gem type (index 0 unused). */
 export const GEM_BLOCK_COLORS = [0, 1, 6, 3];
 export const LEVEL_COUNT = 100;
+/** Adventure: moves a revive adds when a level ran out of moves. */
+export const REVIVE_EXTRA_MOVES = 5;
 /** Adventure: chance that a newly dealt piece carries a gem the level still needs. */
 export const PIECE_GEM_CHANCE = 0.25;

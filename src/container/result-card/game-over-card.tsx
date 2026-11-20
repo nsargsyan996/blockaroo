@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 
 import { Button, CrownIcon, GemIcon, Mascot, PlayIcon, Typography, VideoIcon } from "@component";
-import { goalProgress, TGameState } from "@engine";
+import { goalProgress, movesLeft, TGameState } from "@engine";
 import { palette } from "@theme";
 import { formatScore } from "@util";
 
@@ -24,11 +24,12 @@ export const GameOverCard = memo(function GameOverCard(props: GameOverCardProps)
     const { game, best, isNewBest, canRevive, reviving, onRevive, onPlayAgain, onHome } = props;
     const { t } = useTranslation();
     const adventure = game.adventure;
+    const outOfMoves = movesLeft(game) === 0;
 
     return (
         <ResultCardShell top={<Mascot mood={isNewBest ? "cheer" : "oops"} size={120} />}>
             <Typography variant="title" align="center">
-                {isNewBest ? t("gameOver.newBest") : t("gameOver.title")}
+                {isNewBest ? t("gameOver.newBest") : outOfMoves ? t("gameOver.outOfMoves") : t("gameOver.title")}
             </Typography>
 
             {adventure ? (
@@ -96,7 +97,7 @@ export const GameOverCard = memo(function GameOverCard(props: GameOverCardProps)
                         disabled={reviving}
                     />
                     <Typography variant="body" tone="soft" align="center" className="text-sm">
-                        {t("gameOver.reviveHint")}
+                        {outOfMoves ? t("gameOver.reviveHintMoves") : t("gameOver.reviveHint")}
                     </Typography>
                 </View>
             ) : null}

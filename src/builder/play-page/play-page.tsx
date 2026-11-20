@@ -368,7 +368,7 @@ export const PlayPage = () => {
                 {game && adventure && result === "won" ? (
                     <LevelCompleteCard
                         levelId={adventure.levelId}
-                        stars={lastMove?.stars || starsFor(game.moves, adventure.par)}
+                        stars={lastMove?.stars || starsFor(game.moves, adventure.par, adventure.moveLimit)}
                         moves={game.moves}
                         par={adventure.par}
                         isLastLevel={adventure.levelId >= LEVEL_COUNT}

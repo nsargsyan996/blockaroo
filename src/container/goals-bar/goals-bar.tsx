@@ -10,7 +10,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { GemIcon, Typography } from "@component";
-import { goalProgress, TGameState, TLevelGoal } from "@engine";
+import { goalProgress, movesLeft, TGameState, TLevelGoal } from "@engine";
 import { palette } from "@theme";
 import { formatScore } from "@util";
 
@@ -77,11 +77,32 @@ const GoalChip = memo(function GoalChip({ goal, game }: { goal: TLevelGoal; game
     );
 });
 
-/** Adventure goals under the score: gems still to collect, or progress toward the target score. */
+/** Moves the level still allows. Turns gold, then red, as they run low. */
+const MovesChip = memo(function MovesChip({ left }: { left: number }) {
+    const { t } = useTranslation();
+    const tone = left <= 3 ? "text-[#FF6B7F]" : left <= 6 ? "text-[#FFC23A]" : "text-white";
+    return (
+        <View
+            className="flex-row items-center gap-1.5 rounded-full border border-white/15 bg-white/10 py-1 pl-3 pr-3"
+            accessibilityLabel={`${t("game.moves")} ${left}`}
+        >
+            <Typography variant="caption" tone="soft">
+                {t("game.moves")}
+            </Typography>
+            <Typography variant="subtitle" className={`text-base ${tone}`} style={{ fontVariant: ["tabular-nums"] }}>
+                {left}
+            </Typography>
+        </View>
+    );
+});
+
+/** Adventure goals under the score: moves left, gems still to collect, or progress toward the target score. */
 export const GoalsBar = memo(function GoalsBar({ game }: { game: TGameState }) {
     if (!game.adventure) return null;
+    const left = movesLeft(game);
     return (
         <View className="w-full flex-row flex-wrap items-center justify-center gap-2">
+            {left === null ? null : <MovesChip left={left} />}
             {game.adventure.goals.map((goal, index) => (
                 <GoalChip key={index} goal={goal} game={game} />
             ))}

@@ -9,6 +9,7 @@ import {
     MAX_RESCUES,
     MAX_REVIVES,
     PIECE_GEM_CHANCE,
+    REVIVE_EXTRA_MOVES,
     REVIVE_ROWS_CLEARED,
     ROTATIONS_PER_GAME,
     TRAY_SIZE,
@@ -152,6 +153,7 @@ export const createAdventureGame = (level: TLevel, seed: number = randomSeed()):
         goals: level.goals,
         collected: new Array<number>(GEM_TYPES + 1).fill(0),
         par: level.par,
+        moveLimit: level.moveLimit,
         difficulty: level.difficulty,
     };
     const { tray, nextUid } = dealTray(
@@ -190,8 +192,16 @@ export const goalProgress = (goal: TLevelGoal, state: Pick<TGameState, "score" |
 export const isLevelComplete = (state: Pick<TGameState, "score" | "adventure">) =>
     !!state.adventure && state.adventure.goals.every((goal) => goalProgress(goal, state).done);
 
-/** 3 stars at or under par, 2 within half again, otherwise 1. */
-export const starsFor = (moves: number, par: number) => (moves <= par ? 3 : moves <= Math.ceil(par * 1.5) ? 2 : 1);
+/**
+ * 3 stars at or under par, 2 up to halfway from par to the move limit, otherwise 1. Without a limit (saves from before
+ * move limits) 2 stars reach half again past par.
+ */
+export const starsFor = (moves: number, par: number, moveLimit?: number) =>
+    moves <= par ? 3 : moves <= Math.ceil(moveLimit ? (par + moveLimit) / 2 : par * 1.5) ? 2 : 1;
+
+/** Adventure: moves left before the level ends, or null when there is no limit (classic, older saves). */
+export const movesLeft = (state: Pick<TGameState, "adventure" | "moves">) =>
+    state.adventure?.moveLimit ? Math.max(0, state.adventure.moveLimit - state.moves) : null;
 
 export const canPlacePiece = (state: TGameState, slot: number, row: number, col: number) => {
     const piece = state.tray[slot];
@@ -269,7 +279,8 @@ export const placePiece = (state: TGameState, slot: number, row: number, col: nu
         }
     }
 
-    const gameOver = !won && isStuck(placement.board, tray, turns);
+    const outOfMoves = !won && !!adventure?.moveLimit && state.moves + 1 >= adventure.moveLimit;
+    const gameOver = !won && (outOfMoves || isStuck(placement.board, tray, turns));
 
     return {
         state: {
@@ -300,6 +311,7 @@ export const placePiece = (state: TGameState, slot: number, row: number, col: nu
             dealt,
             rescuedSlots,
             gameOver,
+            outOfMoves,
             collectedGems,
             won,
         },
@@ -340,10 +352,17 @@ export const revive = (state: TGameState): TReviveResult | null => {
         neededGems(state.adventure)
     );
 
+    // A level that ran out of moves gets a few more, on top of the cleared rows.
+    const adventure =
+        state.adventure && movesLeft(state) === 0
+            ? { ...state.adventure, moveLimit: state.moves + REVIVE_EXTRA_MOVES }
+            : state.adventure;
+
     return {
         state: {
             ...state,
             board,
+            adventure,
             tray,
             combo: 0,
             movesSinceClear: 0,

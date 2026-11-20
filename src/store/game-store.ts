@@ -124,7 +124,7 @@ export const useGameStore = create<GameStore>()(
 
                 const finished = result.event.gameOver || result.event.won;
                 const level = result.state.adventure;
-                const stars = result.event.won && level ? starsFor(result.state.moves, level.par) : 0;
+                const stars = result.event.won && level ? starsFor(result.state.moves, level.par, level.moveLimit) : 0;
                 const lastMove: TLastMove = {
                     ...result.event,
                     id: ++moveId,

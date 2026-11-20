@@ -31,6 +31,27 @@ export const gemTypesFor = (id: number) => (id < 4 ? 1 : id < 12 ? 2 : 3);
 /** Dealer difficulty: 0.65 by level 50, then up to 0.8 by level 100. Adventure never reaches the classic maximum. */
 export const difficultyForLevel = (id: number) => Math.min(0.65, (id - 1) / 75) + Math.min(0.15, late(id) * 0.00375);
 
+/** Linear ramp from `from` at level `a` to `to` at level `b`, flat outside. */
+const ramp = (id: number, a: number, from: number, b: number, to: number) =>
+    from + (to - from) * Math.min(1, Math.max(0, (id - a) / (b - a)));
+
+/**
+ * Moves a level allows, as a multiple of the effort its goals take (`effort`, the old 3-star par). Roomy on the first
+ * ten levels while players learn, then tightening until level 40 and a little more by level 100. Score levels get
+ * more room because points need many placements, not just the right ones. Tuned with the level bench.
+ */
+export const moveLimitFactorFor = (id: number, scoreLevel: boolean) =>
+    scoreLevel
+        ? id <= 40
+            ? ramp(id, 10, 1.5, 40, 0.95)
+            : ramp(id, 40, 0.95, 100, 0.8)
+        : id <= 40
+          ? ramp(id, 10, 1.0, 40, 0.58)
+          : ramp(id, 40, 0.58, 100, 0.56);
+
+/** Three stars take at most this share of the move limit. */
+const PAR_SHARE = 0.7;
+
 /** Points to reach on a score level. */
 export const scoreTargetFor = (id: number) => 450 + id * 65;
 
@@ -107,17 +128,20 @@ export const buildLevel = (id: number): TLevel => {
 
     if (scoreLevel) {
         const target = scoreTargetFor(id);
+        const moveLimit = Math.ceil((Math.ceil(target / 110) + count) * moveLimitFactorFor(id, true));
         return {
             id,
             board,
             gems,
             goals: [{ kind: "score", target }, ...gemGoals],
-            par: Math.ceil(target / 110) + count,
+            par: Math.ceil(moveLimit * PAR_SHARE),
+            moveLimit,
             difficulty,
         };
     }
 
-    return { id, board, gems, goals: gemGoals, par: Math.ceil(8 + count * 1.8), difficulty };
+    const moveLimit = Math.ceil(Math.ceil(8 + count * 1.8) * moveLimitFactorFor(id, false));
+    return { id, board, gems, goals: gemGoals, par: Math.ceil(moveLimit * PAR_SHARE), moveLimit, difficulty };
 };
 
 const cache = new Map<number, TLevel>();
