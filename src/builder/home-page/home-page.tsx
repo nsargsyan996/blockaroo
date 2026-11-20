@@ -22,6 +22,7 @@ import {
     Wordmark,
 } from "@component";
 import { LEVEL_COUNT } from "@engine";
+import { LANGUAGE_LABEL, nextLanguage, resolveLanguage } from "@i18n";
 import { playSound } from "@service/sound";
 import { selectCanContinueClassic, selectTotalStars, useGameStore, useSettingsStore } from "@store";
 import { palette } from "@theme";
@@ -124,7 +125,7 @@ const BlockCluster = () => (
 );
 
 export const HomePage = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const router = useRouter();
     const insets = useSafeAreaInsets();
     const { width, height } = useWindowDimensions();
@@ -135,7 +136,8 @@ export const HomePage = () => {
     const unlocked = useGameStore((state) => state.progress.unlocked);
     const startClassic = useGameStore((state) => state.startClassic);
     const resumeClassic = useGameStore((state) => state.resumeClassic);
-    const { soundOn, hapticsOn, toggleSound, toggleHaptics } = useSettingsStore();
+    const { soundOn, hapticsOn, toggleSound, toggleHaptics, setLanguage } = useSettingsStore();
+    const language = resolveLanguage(i18n.language);
 
     // Landscape (tablets, desktop browsers, phones turned sideways): brand on the left, mode cards on the right.
     const landscape = width > height;
@@ -263,6 +265,14 @@ export const HomePage = () => {
                         onPress={toggleHaptics}
                     >
                         <VibrationIcon off={!hapticsOn} size={22} />
+                    </IconButton>
+                    <IconButton
+                        label={`${t("settings.language")}: ${LANGUAGE_LABEL[language]}`}
+                        onPress={() => setLanguage(nextLanguage(language))}
+                    >
+                        <Typography variant="subtitle" tone="white" className="text-sm" numberOfLines={1}>
+                            {LANGUAGE_LABEL[language]}
+                        </Typography>
                     </IconButton>
                 </View>
 

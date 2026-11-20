@@ -11,4 +11,10 @@ describe("settings store", () => {
         useSettingsStore.getState().markFirstOpened();
         expect(useSettingsStore.getState().firstOpenedAt).toBe(1_000);
     });
+
+    it("follows the phone's language until the player picks one", () => {
+        expect(useSettingsStore.getState().language).toBeNull();
+        useSettingsStore.getState().setLanguage("hy");
+        expect(useSettingsStore.getState().language).toBe("hy");
+    });
 });

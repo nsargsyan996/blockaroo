@@ -63,6 +63,7 @@
     "settings": {
         "sound": "Звук",
         "vibration": "Вибрация",
+        "language": "Язык",
         "on": "Вкл",
         "off": "Выкл"
     },
