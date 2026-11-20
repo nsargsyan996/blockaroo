@@ -30,6 +30,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     slug: "blockaroo",
     scheme: "hoppyblocks",
     version: "1.0.1",
+    // Over-the-air updates (EAS Update). Each store version is its own runtime, so an update published from a
+    // 1.0.1 build only reaches 1.0.1 installs and can never land on a binary with different native code.
+    runtimeVersion: { policy: "appVersion" },
+    updates: {
+        url: "https://u.expo.dev/b3678549-4900-4483-b266-09277f2b30b5",
+    },
     orientation: "portrait",
     icon: "./assets/images/icon.png",
     userInterfaceStyle: "dark",

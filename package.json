@@ -20,6 +20,7 @@
         "build:dev": "eas build --profile development",
         "build:preview": "eas build --profile preview",
         "build:prod": "eas build --profile production --platform all",
+        "update:prod": "APP_VARIANT=production eas update --channel production --environment production --platform all",
         "prepare": "husky",
         "bench:levels": "jest --testPathIgnorePatterns=/node_modules/ --testPathPatterns=src/engine/__bench__",
         "build:apk": "eas build --platform android --profile preview"
@@ -45,6 +46,7 @@
         "expo-splash-screen": "~58.0.14",
         "expo-status-bar": "~58.0.5",
         "expo-system-ui": "~58.0.7",
+        "expo-updates": "~58.0.22",
         "i18next": "^25.10.10",
         "nativewind": "^4.2.7",
         "react": "19.3.0",
