@@ -82,6 +82,16 @@ export const BulbIcon = memo(function BulbIcon({ size = 26, color = palette.sun 
     );
 });
 
+/** A clockwise arrow: turning a piece. */
+export const RotateIcon = memo(function RotateIcon({ size = 26, color = palette.text }: IconProps) {
+    return (
+        <Svg width={size} height={size} viewBox="0 0 24 24">
+            <Path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3" {...stroke(color)} />
+            <Path d="M19.5 4v4h-4" {...stroke(color)} />
+        </Svg>
+    );
+});
+
 export const PlayIcon = memo(function PlayIcon({ size = 26, color = palette.text }: IconProps) {
     return (
         <Svg width={size} height={size} viewBox="0 0 24 24">

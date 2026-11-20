@@ -1,8 +1,9 @@
 import { ComponentRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { AppBackground } from "@component";
+import { AppBackground, Typography } from "@component";
 import { GAME_CONFIG } from "@config";
 import {
     DragLayer,
@@ -17,10 +18,19 @@ import {
     TBoardPreview,
     useDragShared,
 } from "@container";
-import { canRevive, cellIndex, getShape, hintsLeft, LEVEL_COUNT, previewClears, starsFor } from "@engine";
+import {
+    canRevive,
+    cellIndex,
+    getShape,
+    hintsLeft,
+    LEVEL_COUNT,
+    previewClears,
+    rotationsLeft,
+    starsFor,
+} from "@engine";
 import { useBoardLayout, useRewardedReady } from "@hooks";
 import { ads, haptic, playSound } from "@service";
-import { selectActiveGame, TLastMove, useGameStore } from "@store";
+import { selectActiveGame, TLastMove, useGameStore, useSettingsStore } from "@store";
 import { resolveDropTarget } from "@util";
 import { useRouter } from "expo-router";
 
@@ -43,6 +53,7 @@ const moveFeedback = (move: TLastMove) => {
 type TResult = "none" | "over" | "won";
 
 export const PlayPage = () => {
+    const { t } = useTranslation();
     const router = useRouter();
     const insets = useSafeAreaInsets();
     const layout = useBoardLayout();
@@ -61,6 +72,8 @@ export const PlayPage = () => {
     const reviveGame = useGameStore((state) => state.revive);
     const hint = useGameStore((state) => state.hint);
     const askHint = useGameStore((state) => state.askHint);
+    const rotate = useGameStore((state) => state.rotate);
+    const turnTipSeen = useSettingsStore((state) => state.turnTipSeen);
     const rewardedReady = useRewardedReady();
 
     const rootRef = useRef<ComponentRef<typeof View>>(null);
@@ -165,6 +178,16 @@ export const PlayPage = () => {
         [place, drag]
     );
 
+    const onTurn = useCallback(
+        (slot: number) => {
+            if (!rotate(slot)) return;
+            playSound("turn");
+            haptic("pickup");
+            useSettingsStore.getState().markTurnTipSeen();
+        },
+        [rotate]
+    );
+
     const onRevive = useCallback(async () => {
         setReviving(true);
         const earned = await ads.showRewarded();
@@ -234,6 +257,7 @@ export const PlayPage = () => {
         [hint, hintPiece]
     );
     const adventure = game?.adventure ?? null;
+    const playing = game?.status === "playing";
 
     const hud = game ? (
         <View className="w-full gap-2">
@@ -241,7 +265,8 @@ export const PlayPage = () => {
                 score={game.score}
                 best={best}
                 levelId={adventure?.levelId}
-                hintsLeft={game.status === "playing" ? hintsLeft(game) : 0}
+                hintsLeft={playing ? hintsLeft(game) : 0}
+                turnsLeft={playing ? rotationsLeft(game) : 0}
                 onHint={askHint}
                 onHome={leave}
             />
@@ -265,17 +290,31 @@ export const PlayPage = () => {
         </View>
     ) : null;
     const tray = game ? (
-        <PieceTray
-            tray={game.tray}
-            board={game.board}
-            layout={layout}
-            drag={drag}
-            hintSlot={boardHint ? hint!.slot : -1}
-            disabled={game.status !== "playing"}
-            onPickUp={onPickUp}
-            onHover={onHover}
-            onRelease={onRelease}
-        />
+        <View>
+            <PieceTray
+                tray={game.tray}
+                board={game.board}
+                layout={layout}
+                drag={drag}
+                hintSlot={boardHint ? hint!.slot : -1}
+                turnsLeft={playing ? rotationsLeft(game) : 0}
+                disabled={!playing}
+                onPickUp={onPickUp}
+                onHover={onHover}
+                onRelease={onRelease}
+                onTurn={onTurn}
+            />
+            {/* Until the first turn, a tip under the tray. Absolute, so the board does not move when it goes away. */}
+            {!turnTipSeen && playing ? (
+                <View pointerEvents="none" className="absolute inset-x-0 top-full items-center">
+                    <View className="rounded-full bg-white/15 px-4 py-1">
+                        <Typography variant="caption" tone="white" align="center">
+                            {t("game.turnTip")}
+                        </Typography>
+                    </View>
+                </View>
+            ) : null}
+        </View>
     ) : null;
 
     return (

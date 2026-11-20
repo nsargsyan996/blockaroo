@@ -25,6 +25,9 @@
         "level": "Level {{level}}",
         "goals": "Goals",
         "hint": "Hint, {{count}} left",
+        "turns": "Turns left: {{count}}",
+        "turnTip": "Tap a piece to turn it",
+        "turnPiece": "Tap to turn",
         "combo": "Combo x{{count}}",
         "praise": {
             "good": "Good!",

@@ -83,6 +83,11 @@ const SOUNDS = {
     tap: render(0.05, (b) => voice(b, { length: 0.05, from: 1040, decay: 5 })),
     // Picking up a piece: a short upward chirp.
     pickup: render(0.07, (b) => voice(b, { length: 0.07, from: 700, to: 900, decay: 4 })),
+    // Turning a piece: a quick two-step swoosh upward.
+    turn: render(0.12, (b) => {
+        voice(b, { length: 0.06, from: 520, to: 780, wave: triangle, decay: 4 });
+        voice(b, { at: 0.05, length: 0.07, from: 780, to: 1170, wave: triangle, decay: 4 });
+    }),
     // A piece lands: a low thump with a soft click on top.
     place: render(0.14, (b) => {
         voice(b, { length: 0.14, from: 200, to: 170, decay: 7 });

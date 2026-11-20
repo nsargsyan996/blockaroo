@@ -6,6 +6,7 @@ import {
     LEVEL_COUNT,
     placePiece,
     revive,
+    rotatePiece,
     starsFor,
     takeHint,
     TGameMode,
@@ -61,6 +62,8 @@ interface GameStore {
     revive: () => boolean;
     /** Spends one of the game's hints and shows it. False when none are left or one is already showing. */
     askHint: () => boolean;
+    /** Turns the tray piece in `slot` a quarter turn clockwise. False when it can't be turned (see rotatePiece). */
+    rotate: (slot: number) => boolean;
 }
 
 const STORE_VERSION = 2;
@@ -175,6 +178,16 @@ export const useGameStore = create<GameStore>()(
                 const result = takeHint(game);
                 if (!result) return false;
                 set({ [state.activeMode]: result.state, hint: result.hint });
+                return true;
+            },
+
+            rotate: (slot) => {
+                const state = get();
+                const game = state[state.activeMode];
+                const turned = game && rotatePiece(game, slot);
+                if (!turned) return false;
+                // A hint for the turned piece would show cells it no longer covers.
+                set({ [state.activeMode]: turned, hint: state.hint?.slot === slot ? null : state.hint });
                 return true;
             },
         }),

@@ -1,4 +1,14 @@
-import { findPlacements, getShape, HINTS_PER_GAME, hintsLeft, LEVEL_COUNT } from "@engine";
+import {
+    findPlacements,
+    getShape,
+    HINTS_PER_GAME,
+    hintsLeft,
+    isRotationSymmetric,
+    LEVEL_COUNT,
+    rotatedShapeId,
+    ROTATIONS_PER_GAME,
+    rotationsLeft,
+} from "@engine";
 
 import { selectActiveGame, selectCanContinueClassic, selectTotalStars, useGameStore } from "../game-store";
 import { useSettingsStore } from "../settings-store";
@@ -84,6 +94,20 @@ describe("game store: classic", () => {
 
         // Following the hint clears it.
         expect(useGameStore.getState().place(hint!.slot, hint!.row, hint!.col)).not.toBeNull();
+        expect(useGameStore.getState().hint).toBeNull();
+    });
+
+    it("turns a tray piece and drops a hint that pointed at it", () => {
+        expect(useGameStore.getState().rotate(0)).toBe(false);
+        useGameStore.getState().startClassic(5);
+        const game = useGameStore.getState().classic!;
+        const slot = game.tray.findIndex((piece) => piece && !isRotationSymmetric(piece.shapeId));
+        useGameStore.setState({ hint: { slot, row: 0, col: 0, cells: [0], turns: 0 } });
+
+        expect(useGameStore.getState().rotate(slot)).toBe(true);
+        const turned = useGameStore.getState().classic!;
+        expect(turned.tray[slot]!.shapeId).toBe(rotatedShapeId(game.tray[slot]!.shapeId));
+        expect(rotationsLeft(turned)).toBe(ROTATIONS_PER_GAME - 1);
         expect(useGameStore.getState().hint).toBeNull();
     });
 

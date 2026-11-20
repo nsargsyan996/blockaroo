@@ -3,6 +3,7 @@ import { AudioPlayer, createAudioPlayer, setAudioModeAsync } from "expo-audio";
 
 const SOURCES = {
     pickup: require("@assets/sounds/pickup.wav"),
+    turn: require("@assets/sounds/turn.wav"),
     place: require("@assets/sounds/place.wav"),
     invalid: require("@assets/sounds/invalid.wav"),
     clear: require("@assets/sounds/clear.wav"),

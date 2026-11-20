@@ -17,4 +17,10 @@ describe("settings store", () => {
         useSettingsStore.getState().setLanguage("hy");
         expect(useSettingsStore.getState().language).toBe("hy");
     });
+
+    it("remembers that the turn tip was seen", () => {
+        expect(useSettingsStore.getState().turnTipSeen).toBe(false);
+        useSettingsStore.getState().markTurnTipSeen();
+        expect(useSettingsStore.getState().turnTipSeen).toBe(true);
+    });
 });
