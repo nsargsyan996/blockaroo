@@ -1,8 +1,8 @@
 :root {
-    --night: #0a1f7a;
-    --card: #102a8f;
+    --night: #0d1238;
+    --card: #151d5c;
     --text: #ffffff;
-    --soft: #b9cbff;
+    --soft: #b9c4ff;
     --sun: #ffc83d;
 }
 
@@ -12,7 +12,8 @@
 
 body {
     margin: 0;
-    background: var(--night);
+    background: linear-gradient(180deg, #151c52 0%, var(--night) 45%, #070a22 100%) fixed;
+    background-color: var(--night);
     color: var(--text);
     font:
         17px/1.6 -apple-system,

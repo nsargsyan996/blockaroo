@@ -3,52 +3,342 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Hoppy Blocks Support</title>
+        <title>Hoppy Blocks – Free Block Puzzle Game | 8×8 Blocks, Gems &amp; 100 Levels</title>
         <meta
             name="description"
-            content="Hoppy Blocks is a block puzzle game for all ages, starring Roo the kangaroo."
+            content="Hoppy Blocks is a free block puzzle game for iPhone and Android. Drag blocks onto an 8×8 grid, clear lines, and collect hidden gems in 100 Adventure levels. Works offline, family friendly."
         />
+        <meta name="theme-color" content="#0D1238" />
+        <link rel="canonical" href="https://hoppyblocks.com/" />
         <link rel="icon" href="favicon.png" />
-        <link rel="stylesheet" href="style.css" />
+        <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Hoppy Blocks – Free Block Puzzle Game" />
+        <meta property="og:description" content="Drag. Drop. Clear lines. 100 Adventure levels full of hidden gems." />
+        <meta property="og:image" content="https://hoppyblocks.com/img/og.jpg" />
+        <meta property="og:url" content="https://hoppyblocks.com/" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="robots" content="index, follow" />
+        <meta name="apple-itunes-app" content="app-id=6835829509" />
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": ["VideoGame", "MobileApplication"],
+                "name": "Hoppy Blocks",
+                "alternateName": "Hoppy Blocks: Puzzle Game",
+                "url": "https://hoppyblocks.com/",
+                "image": "https://hoppyblocks.com/img/og.jpg",
+                "description": "A free block puzzle game: drag blocks onto an 8×8 grid, clear rows and columns, and collect hidden gems across 100 Adventure levels.",
+                "genre": ["Puzzle", "Block puzzle", "Casual"],
+                "gamePlatform": ["iOS", "Android"],
+                "operatingSystem": "iOS, Android",
+                "applicationCategory": "GameApplication",
+                "applicationSubCategory": "Puzzle",
+                "playMode": "SinglePlayer",
+                "inLanguage": ["en", "ru", "hy"],
+                "contentRating": "Everyone",
+                "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+                "author": { "@type": "Person", "name": "Narek Sargsyan" },
+                "installUrl": [
+                    "https://apps.apple.com/app/id6835829509",
+                    "https://play.google.com/store/apps/details?id=com.hoppyblocks.game"
+                ]
+            }
+        </script>
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                "mainEntity": [
+                    {
+                        "@type": "Question",
+                        "name": "Is Hoppy Blocks free?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Yes. Hoppy Blocks is a free block puzzle game for iPhone, iPad and Android, supported by family-safe ads. There are no in-app purchases."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Can I play this block puzzle offline?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Yes. Every mode works without an internet connection."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Is my progress saved?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Yes, on your device. Your best score, Adventure stars and current game are kept when you close the app."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Is it safe for kids?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "Yes. No accounts, chats or in-app purchases, and ads are limited to G-rated, non-personalized content."
+                        }
+                    }
+                ]
+            }
+        </script>
+        <link rel="preload" href="fonts/poppins-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin />
+        <link rel="stylesheet" href="home.css" />
     </head>
     <body>
-        <main>
-            <header>
-                <img src="icon.png" alt="Hoppy Blocks icon" />
-                <h1>Hoppy Blocks</h1>
-            </header>
+        <header class="nav">
+            <a class="brand" href="#top" aria-label="Hoppy Blocks home">
+                <img src="img/icon.png" alt="" width="36" height="36" />
+                <span>Hoppy <b>Blocks</b></span>
+            </a>
+            <nav>
+                <a href="#features">Features</a>
+                <a href="#about">How to play</a>
+                <a href="#faq">FAQ</a>
+                <a class="nav-cta" href="#download">Download</a>
+            </nav>
+        </header>
 
-            <p>
-                A block puzzle game for all ages, starring Roo the kangaroo. Drag pieces onto an 8×8 board, fill a row
-                or column to clear it, and keep clearing to build a streak.
-            </p>
+        <main id="top">
+            <!-- HERO -->
+            <section class="hero">
+                <div class="stage" aria-hidden="true">
+                    <div class="rays"></div>
+                    <img class="float f1" src="img/cube-ruby.png" alt="" />
+                    <img class="float f2" src="img/cube-aqua.png" alt="" />
+                    <img class="float f3" src="img/piece-t-1.png" alt="" />
+                    <img class="float f4" src="img/cube-topaz.png" alt="" />
+                    <img class="float f5" src="img/piece-s-0.png" alt="" />
+                    <img class="float f6 blur" src="img/cube-amethyst.png" alt="" />
+                    <img class="float f7 blur" src="img/cube-emerald.png" alt="" />
+                    <img class="float f8" src="img/piece-l-0.png" alt="" />
+                </div>
+                <div class="hero-inner">
+                    <div class="hero-copy">
+                        <p class="eyebrow">Free block puzzle game</p>
+                        <h1>
+                            <img class="wordmark" src="img/wordmark.png" alt="" width="1100" height="203" />
+                            <span class="sr-only">Hoppy Blocks – free block puzzle game</span>
+                        </h1>
+                        <p class="tagline">Drag. Drop. <span class="gold">Clear lines.</span></p>
+                        <p class="lead">
+                            A relaxing <strong>block puzzle</strong> for iPhone and Android. Drag glossy jewel blocks
+                            onto an 8×8 grid, clear rows and columns, and chain streaks for big scores. Play endless
+                            Classic or hunt hidden gems across 100 Adventure levels.
+                        </p>
+                        <div class="stores" id="download">
+                            <a class="store" href="https://apps.apple.com/app/id6835829509" rel="noopener">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path
+                                        d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm0 3v13h10V5H7Zm5 14.2a1 1 0 1 0 0 .01Z"
+                                    />
+                                </svg>
+                                <span><small>Download on the</small>App Store</span>
+                            </a>
+                            <a
+                                class="store"
+                                href="https://play.google.com/store/apps/details?id=com.hoppyblocks.game"
+                                rel="noopener"
+                            >
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path
+                                        d="M5 3.5v17a1 1 0 0 0 1.5.86l14-8.5a1 1 0 0 0 0-1.72l-14-8.5A1 1 0 0 0 5 3.5Z"
+                                    />
+                                </svg>
+                                <span><small>Get it on</small>Google Play</span>
+                            </a>
+                        </div>
+                        <p class="fineprint">Free to play · Works offline · No accounts</p>
+                    </div>
+                    <div class="hero-art" aria-hidden="true">
+                        <div class="glow"></div>
+                        <img class="burst" src="img/burst.png" alt="" />
+                        <img class="mark" src="img/mark.png" alt="" />
+                    </div>
+                </div>
+            </section>
 
-            <h2>Support</h2>
-            <div class="card">
-                <p>
-                    Found a bug or have an idea? Write to
-                    <a href="mailto:blockaroo.support@gmail.com">blockaroo.support@gmail.com</a>. Please mention your
-                    device and whether you play on iOS or Android.
-                </p>
-            </div>
+            <!-- FEATURES -->
+            <section class="section" id="features">
+                <h2>Easy to learn. <span class="gold">Hard to put down.</span></h2>
+                <div class="cards">
+                    <article class="card">
+                        <img src="img/piece-o-0.png" alt="" />
+                        <h3>Classic</h3>
+                        <p>
+                            Endless play. Every set of pieces can be placed, so you're never stuck on an impossible
+                            hand. How high can you go?
+                        </p>
+                    </article>
+                    <article class="card violet">
+                        <img src="img/cube-amethyst.png" alt="" />
+                        <h3>100 Adventure levels</h3>
+                        <p>
+                            Score challenges and gem hunts that grow with you. Finish in few moves to earn all three
+                            stars.
+                        </p>
+                    </article>
+                    <article class="card gold-card">
+                        <svg class="gem" viewBox="0 0 100 100" aria-hidden="true">
+                            <path d="M28 18 L72 18 L92 40 L50 88 L8 40 Z" fill="#3FB8FF" />
+                            <path d="M28 18 L72 18 L62 40 L38 40Z" fill="#BFF0FF" />
+                            <path d="M28 18 L38 40 L8 40Z" fill="#8FE0FF" />
+                            <path d="M72 18 L92 40 L62 40Z" fill="#4FC4FF" />
+                            <path d="M8 40 L38 40 L50 88Z" fill="#6FD2FF" />
+                            <path d="M38 40 L62 40 L50 88Z" fill="#3FA8F5" />
+                            <path d="M62 40 L92 40 L50 88Z" fill="#1E7FE0" />
+                            <path
+                                d="M28 18 L72 18 L92 40 L50 88 L8 40 Z"
+                                fill="none"
+                                stroke="#0A1C5E"
+                                stroke-width="7"
+                                stroke-linejoin="round"
+                            />
+                            <path d="M33 22 L46 22 L40 34Z" fill="#fff" />
+                        </svg>
+                        <h3>Hidden gems</h3>
+                        <p>
+                            Diamonds, stars and hearts hide in the blocks, and new ones arrive on your pieces. Clear
+                            their lines to collect them.
+                        </p>
+                    </article>
+                    <article class="card green">
+                        <img src="img/piece-l-0.png" alt="" />
+                        <h3>Turn &amp; hint</h3>
+                        <p>
+                            Tap a piece to turn it, ask for a hint when you're stuck, and drops that are a little off
+                            snap into place.
+                        </p>
+                    </article>
+                </div>
+            </section>
 
-            <h2>Questions</h2>
-            <p><strong>Is my progress saved?</strong></p>
-            <p>
-                Yes, on your device. Your best score, Adventure stars and the game you're playing are kept even if you
-                close the app. Uninstalling the app removes them.
-            </p>
-            <p><strong>Can I play offline?</strong></p>
-            <p>Yes. Everything works without a connection; ads simply don't load.</p>
-            <p><strong>Is it safe for kids?</strong></p>
-            <p>
-                Yes. There are no accounts, chats or in-app purchases. Ads are limited to G-rated, non-personalized,
-                child-directed content, and videos play only when the player chooses to watch one.
-            </p>
-            <p><strong>How do I turn off sound or vibration?</strong></p>
-            <p>Use the Sound and Vibration toggles on the home screen.</p>
+            <!-- FAMILY -->
+            <section class="section family">
+                <div class="family-card">
+                    <div>
+                        <h2>Made for the <span class="gold">whole family</span></h2>
+                        <ul>
+                            <li>No accounts, no chat, no in-app purchases</li>
+                            <li>Ads are G-rated and non-personalized, and never interrupt a game in progress</li>
+                            <li>Big buttons, clear text and cheerful feedback</li>
+                            <li>Works offline, in English, Russian and Armenian</li>
+                        </ul>
+                    </div>
+                    <img src="img/mark.png" alt="" aria-hidden="true" />
+                </div>
+            </section>
 
-            <footer><a href="privacy/">Privacy Policy</a></footer>
+            <!-- ABOUT (search-friendly copy) -->
+            <section class="section about" id="about">
+                <h2>A classic <span class="gold">block puzzle</span>, polished</h2>
+                <div class="about-grid">
+                    <div>
+                        <h3>How to play</h3>
+                        <p>
+                            Hoppy Blocks keeps the block puzzle rules you already know. Drag the three pieces onto the
+                            8×8 grid, fill a whole row or column to clear it, and keep clearing to build a streak. Plan
+                            ahead: when no piece fits, the game is over. It's quick to learn, relaxing to play, and a
+                            great daily brain game.
+                        </p>
+                    </div>
+                    <div>
+                        <h3>More than a block game</h3>
+                        <p>
+                            Beyond endless Classic mode, Adventure turns the blocks puzzle into a journey of 100 levels:
+                            collect hidden diamonds, stars and hearts, beat score challenges, and earn three stars on
+                            every board. Turn pieces, ask for hints, and play anywhere, even offline.
+                        </p>
+                    </div>
+                    <div>
+                        <h3>Free, offline, family friendly</h3>
+                        <p>
+                            Hoppy Blocks is a free puzzle game for iPhone, iPad and Android phones. There are no
+                            accounts and no in-app purchases, ads are family-safe, and it runs without Wi-Fi, perfect
+                            for commutes, flights and quick breaks.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FAQ -->
+            <section class="section" id="faq">
+                <h2>Questions</h2>
+                <div class="faq">
+                    <details>
+                        <summary>Is Hoppy Blocks free?</summary>
+                        <p>
+                            Yes. Hoppy Blocks is a free block puzzle game for iPhone, iPad and Android, supported by
+                            family-safe ads. There are no in-app purchases.
+                        </p>
+                    </details>
+                    <details>
+                        <summary>Is my progress saved?</summary>
+                        <p>
+                            Yes, on your device. Your best score, Adventure stars and the game you're playing are kept
+                            even if you close the app. Uninstalling the app removes them.
+                        </p>
+                    </details>
+                    <details>
+                        <summary>Can I play offline?</summary>
+                        <p>Yes. Everything works without a connection; ads simply don't load.</p>
+                    </details>
+                    <details>
+                        <summary>Is it safe for kids?</summary>
+                        <p>
+                            Yes. There are no accounts, chats or in-app purchases. Ads are limited to G-rated,
+                            non-personalized, child-directed content, and videos play only when the player chooses to
+                            watch one.
+                        </p>
+                    </details>
+                    <details>
+                        <summary>How do I turn off sound or vibration?</summary>
+                        <p>Use the Sound and Vibration toggles on the home screen.</p>
+                    </details>
+                    <details>
+                        <summary>I found a bug or have an idea</summary>
+                        <p>
+                            Write to <a href="mailto:blockaroo.support@gmail.com">blockaroo.support@gmail.com</a>.
+                            Please mention your device and whether you play on iOS or Android.
+                        </p>
+                    </details>
+                </div>
+            </section>
+
+            <!-- FINAL CTA -->
+            <section class="section final">
+                <img src="img/icon.png" alt="" width="96" height="96" class="final-icon" />
+                <h2>Ready to clear some lines?</h2>
+                <div class="stores center">
+                    <a class="store" href="https://apps.apple.com/app/id6835829509" rel="noopener">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path
+                                d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm0 3v13h10V5H7Zm5 14.2a1 1 0 1 0 0 .01Z"
+                            />
+                        </svg>
+                        <span><small>Download on the</small>App Store</span>
+                    </a>
+                    <a
+                        class="store"
+                        href="https://play.google.com/store/apps/details?id=com.hoppyblocks.game"
+                        rel="noopener"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M5 3.5v17a1 1 0 0 0 1.5.86l14-8.5a1 1 0 0 0 0-1.72l-14-8.5A1 1 0 0 0 5 3.5Z" />
+                        </svg>
+                        <span><small>Get it on</small>Google Play</span>
+                    </a>
+                </div>
+            </section>
         </main>
+
+        <footer class="footer">
+            <span>© 2026 Hoppy Blocks</span>
+            <a href="privacy/">Privacy Policy</a>
+            <a href="mailto:blockaroo.support@gmail.com">Support</a>
+        </footer>
     </body>
 </html>
