@@ -4,8 +4,8 @@ const { readFileSync } = require("node:fs");
 const { join } = require("node:path");
 
 const LISTING = readFileSync(join(__dirname, "store/listing.md"), "utf8");
-const PRIVACY_URL = "https://nsargsyan996.github.io/blockaroo/privacy/";
-const SUPPORT_URL = "https://nsargsyan996.github.io/blockaroo/";
+const PRIVACY_URL = "https://hoppyblocks.com/privacy/";
+const SUPPORT_URL = "https://hoppyblocks.com/";
 
 /** The ```text block under `### <field>` inside `## <section>` of listing.md. */
 const field = (section, name) => {

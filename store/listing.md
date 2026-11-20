@@ -6,8 +6,8 @@ so formatting tools keep its line breaks and it copies exactly.
 Apple guideline 1.3: an app outside the Kids Category must not say "for kids" or "for children" in its metadata, so the
 text says "family" and "all ages" instead. Keep it that way when editing.
 
-- Privacy policy URL: https://nsargsyan996.github.io/blockaroo/privacy/
-- Support / marketing URL: https://nsargsyan996.github.io/blockaroo/
+- Privacy policy URL: https://hoppyblocks.com/privacy/
+- Support / marketing URL: https://hoppyblocks.com/
 - Contact email: blockaroo.support@gmail.com (both stores show it publicly)
 - Category: **Games › Puzzle** on both stores. Secondary category on iOS: **Games › Family**.
 - Price: free. Contains ads: yes. In-app purchases: none.
