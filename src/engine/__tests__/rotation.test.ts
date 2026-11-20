@@ -3,7 +3,16 @@ import { boardFromArt } from "@test-utils";
 import { canFitAnywhere } from "../board";
 import { MAX_RESCUES, ROTATIONS_PER_GAME } from "../constants";
 import { TGameState } from "../engine.type";
-import { canFitWithTurns, canRotatePiece, createGame, isStuck, placePiece, rotatePiece, rotationsLeft } from "../game";
+import {
+    canFitWithTurns,
+    canRotatePiece,
+    createGame,
+    isStuck,
+    placePiece,
+    rotatePiece,
+    rotationsLeft,
+    settleStatus,
+} from "../game";
 import { findHint, takeHint } from "../hint";
 import { getShape, isRotationSymmetric, rotatedShapeId, SHAPES, shapeTurns } from "../shapes";
 
@@ -119,6 +128,43 @@ describe("game over with turns left", () => {
             ["dot", "bar3-h", null]
         );
         expect(placePiece(game, 0, 7, 7)!.state.status).toBe("over");
+    });
+
+    // Reported on a phone: the last turn went on a piece that fits nowhere, and the game never ended.
+    it("ends the game when the last turn is spent on the wrong piece", () => {
+        const board = boardFromArt(VERTICAL_SLOT);
+        const game = withTray({ ...createGame(1), board, rotationsUsed: ROTATIONS_PER_GAME - 1 }, [
+            "bar3-h",
+            "l-0",
+            null,
+        ]);
+        expect(game.status).toBe("playing");
+
+        const turned = rotatePiece(game, 1)!;
+        expect(rotationsLeft(turned)).toBe(0);
+        expect(turned.status).toBe("over");
+    });
+
+    it("keeps the game going when the last turn makes a piece fit", () => {
+        const board = boardFromArt(VERTICAL_SLOT);
+        const game = withTray({ ...createGame(1), board, rotationsUsed: ROTATIONS_PER_GAME - 1 }, [
+            "bar3-h",
+            "l-0",
+            null,
+        ]);
+        const turned = rotatePiece(game, 0)!;
+        expect(turned.status).toBe("playing");
+        expect(placePiece(turned, 0, 0, 0)).not.toBeNull();
+    });
+
+    it("ends a saved game that was left stuck", () => {
+        const board = boardFromArt(VERTICAL_SLOT);
+        const stuck = withTray({ ...createGame(1), board, rotationsUsed: ROTATIONS_PER_GAME }, ["bar3-h", "l-0", null]);
+        expect(stuck.status).toBe("playing");
+        expect(settleStatus(stuck).status).toBe("over");
+
+        const playable = withTray({ ...createGame(1), board, rotationsUsed: 0 }, ["bar3-h", null, null]);
+        expect(settleStatus(playable)).toBe(playable);
     });
 });
 

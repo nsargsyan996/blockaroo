@@ -85,6 +85,12 @@ export const isStuck = (board: TBoard, tray: TTray, turns = 0) =>
 export const rotationsLeft = (state: Pick<TGameState, "rotationsUsed">) =>
     Math.max(0, ROTATIONS_PER_GAME - (state.rotationsUsed ?? 0));
 
+/** Ends a game that is still marked as playing although nothing in the tray fits, even with the turns left. */
+export const settleStatus = (state: TGameState): TGameState =>
+    state.status === "playing" && isStuck(state.board, state.tray, rotationsLeft(state))
+        ? { ...state, status: "over" }
+        : state;
+
 /** A piece can be turned while the game is on, turns are left, and turning would change it. */
 export const canRotatePiece = (state: TGameState, slot: number) => {
     const piece = state.tray[slot];
@@ -96,6 +102,8 @@ export const canRotatePiece = (state: TGameState, slot: number) => {
 /**
  * Turns the piece in tray slot `slot` a quarter turn clockwise and spends one of the game's turns. It keeps its uid
  * and color, and does not count as a move. Returns null when the piece can't be turned.
+ *
+ * Spending a turn can end the game: when the last turns go on the wrong piece, nothing in the tray may fit any more.
  */
 export const rotatePiece = (state: TGameState, slot: number): TGameState | null => {
     if (!canRotatePiece(state, slot)) return null;
@@ -108,7 +116,7 @@ export const rotatePiece = (state: TGameState, slot: number): TGameState | null 
     const tray = state.tray.map((item, index) =>
         index === slot ? { ...piece, shapeId: rotatedShapeId(piece.shapeId), ...(gem ? { gem } : {}) } : item
     );
-    return { ...state, tray, rotationsUsed: (state.rotationsUsed ?? 0) + 1 };
+    return settleStatus({ ...state, tray, rotationsUsed: (state.rotationsUsed ?? 0) + 1 });
 };
 
 const emptyGems = (): TGem[] => new Array<number>(CELL_COUNT).fill(0);

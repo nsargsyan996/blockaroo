@@ -180,10 +180,18 @@ export const PlayPage = () => {
 
     const onTurn = useCallback(
         (slot: number) => {
-            if (!rotate(slot)) return;
+            const turn = rotate(slot);
+            if (!turn) return;
             playSound("turn");
             haptic("pickup");
             useSettingsStore.getState().markTurnTipSeen();
+            if (turn.gameOver) {
+                setTimeout(() => {
+                    setResult("over");
+                    playSound("gameover");
+                    haptic("gameover");
+                }, GAME_CONFIG.gameOverDelayMs);
+            }
         },
         [rotate]
     );

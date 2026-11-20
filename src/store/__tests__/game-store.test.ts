@@ -98,13 +98,13 @@ describe("game store: classic", () => {
     });
 
     it("turns a tray piece and drops a hint that pointed at it", () => {
-        expect(useGameStore.getState().rotate(0)).toBe(false);
+        expect(useGameStore.getState().rotate(0)).toBeNull();
         useGameStore.getState().startClassic(5);
         const game = useGameStore.getState().classic!;
         const slot = game.tray.findIndex((piece) => piece && !isRotationSymmetric(piece.shapeId));
         useGameStore.setState({ hint: { slot, row: 0, col: 0, cells: [0], turns: 0 } });
 
-        expect(useGameStore.getState().rotate(slot)).toBe(true);
+        expect(useGameStore.getState().rotate(slot)).toEqual({ gameOver: false });
         const turned = useGameStore.getState().classic!;
         expect(turned.tray[slot]!.shapeId).toBe(rotatedShapeId(game.tray[slot]!.shapeId));
         expect(rotationsLeft(turned)).toBe(ROTATIONS_PER_GAME - 1);

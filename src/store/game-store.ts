@@ -7,6 +7,7 @@ import {
     placePiece,
     revive,
     rotatePiece,
+    settleStatus,
     starsFor,
     takeHint,
     TGameMode,
@@ -62,8 +63,11 @@ interface GameStore {
     revive: () => boolean;
     /** Spends one of the game's hints and shows it. False when none are left or one is already showing. */
     askHint: () => boolean;
-    /** Turns the tray piece in `slot` a quarter turn clockwise. False when it can't be turned (see rotatePiece). */
-    rotate: (slot: number) => boolean;
+    /**
+     * Turns the tray piece in `slot` a quarter turn clockwise. Null when it can't be turned (see rotatePiece);
+     * gameOver is true when that turn left nothing that fits.
+     */
+    rotate: (slot: number) => { gameOver: boolean } | null;
 }
 
 const STORE_VERSION = 2;
@@ -185,10 +189,15 @@ export const useGameStore = create<GameStore>()(
                 const state = get();
                 const game = state[state.activeMode];
                 const turned = game && rotatePiece(game, slot);
-                if (!turned) return false;
-                // A hint for the turned piece would show cells it no longer covers.
-                set({ [state.activeMode]: turned, hint: state.hint?.slot === slot ? null : state.hint });
-                return true;
+                if (!turned) return null;
+                const gameOver = turned.status === "over";
+                set({
+                    [state.activeMode]: turned,
+                    // A hint for the turned piece would show cells it no longer covers.
+                    hint: state.hint?.slot === slot ? null : state.hint,
+                    gamesFinished: gameOver ? state.gamesFinished + 1 : state.gamesFinished,
+                });
+                return { gameOver };
             },
         }),
         {
@@ -215,8 +224,9 @@ export const useGameStore = create<GameStore>()(
                     ...current,
                     ...saved,
                     // A save from an older engine version is dropped instead of crashing the board.
-                    classic: isValidGameState(saved.classic) ? saved.classic : null,
-                    adventure: isValidGameState(saved.adventure) ? saved.adventure : null,
+                    // settleStatus also ends games saved stuck by older versions, which never ended after a last turn.
+                    classic: isValidGameState(saved.classic) ? settleStatus(saved.classic) : null,
+                    adventure: isValidGameState(saved.adventure) ? settleStatus(saved.adventure) : null,
                     progress: saved.progress ?? current.progress,
                 };
             },
