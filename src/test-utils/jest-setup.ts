@@ -14,3 +14,7 @@ jest.mock("expo-audio", () => ({
 // Reanimated 4 runs on react-native-worklets, whose native module does not exist under Jest.
 // eslint-disable-next-line @typescript-eslint/no-require-imports -- jest.mock factories must be synchronous
 jest.mock("react-native-worklets", () => require("react-native-worklets/lib/module/mock"));
+
+// Reanimated's own Jest mock: animations finish at once, so components render their final state.
+// eslint-disable-next-line @typescript-eslint/no-require-imports -- jest.mock factories must be synchronous
+jest.mock("react-native-reanimated", () => require("react-native-reanimated/mock"));

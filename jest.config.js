@@ -14,6 +14,8 @@ module.exports = {
             "@react-native-async-storage/async-storage/jest/async-storage-mock"
         ),
         "^react-native-google-mobile-ads$": "<rootDir>/src/test-utils/__mocks__/google-mobile-ads-mock.js",
+        // Only Reanimated's initializers.native imports this path (src or compiled lib); see the shim for why.
+        "^\\./css/native(/index\\.js)?$": "<rootDir>/src/test-utils/__mocks__/reanimated-css-native.js",
         "^@test-utils$": "<rootDir>/src/test-utils/index.ts",
         "^@(app|assets|builder|component|config|container|engine|hooks|i18n|layout|modal|provider|service|store|theme|util|widget)(/.+)?$":
             "<rootDir>/src/$1$2",
